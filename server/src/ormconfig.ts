@@ -9,4 +9,6 @@ export const AppDataSource = new DataSource({
   entities: [__dirname + "/entity/*.ts"],
   synchronize: true,
   logging: true,
+
+ 
 });
