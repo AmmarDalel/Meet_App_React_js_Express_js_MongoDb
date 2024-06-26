@@ -1,6 +1,6 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, OneToMany } from 'typeorm';
 import { User } from './User';
-
+import { Conversation } from './Conversation';
 @Entity()
 export class HistoricCall {
   @PrimaryGeneratedColumn()
@@ -10,7 +10,16 @@ export class HistoricCall {
   callType!: string;
 
   @Column()
+  callCode!: string;
+
+  @Column()
+  callUrl!: string;
+
+  @Column()
   timestamp!: Date;
+
+  @Column()
+  endTime!: Date;
 
   @Column()
   duration!: number;
@@ -18,4 +27,8 @@ export class HistoricCall {
   @ManyToOne(() => User, user => user.historicCalls)
   @JoinColumn({ name: 'userId' })
   user!: User;
+
+  
+  @OneToMany(() => Conversation, conversation => conversation.id)
+  conversations!: Conversation[];
 }
