@@ -6,10 +6,9 @@ import { FindOneOptions } from 'typeorm';
 
 let userRepository = getUserRepository();
 
-// Utilisez userRepository comme vous en avez besoin ici
-
-
 export class UserController {
+
+  
   static getAll = async (req: Request, res: Response) => {
 
     if(userRepository!=null){
@@ -29,7 +28,7 @@ export class UserController {
     let user;
     try {
       user = await userRepository.findOneOrFail(id as FindOneOptions<User>);
-      user.firstName = name;
+      user.fullName = name;
       user.email = email;
       await userRepository.save(user);
     } catch (error) {
@@ -60,7 +59,7 @@ export class UserController {
   static create = async (req: Request, res: Response) => {
     const { name, email } = req.body;
     const user = new User();
-    user.firstName = name;
+    user.fullName = name;
     user.email = email;
     if(userRepository!=null){
 
@@ -80,6 +79,34 @@ export class UserController {
       return res.status(404).json({ message: 'User not found' });
     }
     res.json({ message: 'User deleted successfully' });
+  };
+
+  static updateConfirmationCode = async (req: Request, res: Response) => {
+    const { email, confirmationCode } = req.body;
+
+        try {
+          let user = await userRepository.findOne({ where: { email } });
+
+          if (!user) {
+            // Si l'utilisateur n'existe pas, le créer avec le code de confirmation
+            user = new User();
+            user.email = email;
+            user.confirmationCode = confirmationCode;
+            await userRepository.save(user); // Enregistrer l'utilisateur dans la base de données
+            } else {
+                // Si l'utilisateur existe, mettre à jour le code de confirmation
+                user.confirmationCode = confirmationCode;
+                await userRepository.save(user);  // Mettre à jour l'utilisateur dans la base de données
+            }
+            // Mettre à jour le code de confirmation
+            user.confirmationCode = confirmationCode;
+            await userRepository.save(user);
+
+            res.status(200).json({ message: 'Code de confirmation mis à jour avec succès' });
+        } catch (error) {
+            console.error('Erreur lors de la mise à jour du code de confirmation :', error);
+            res.status(500).json({ message: 'Erreur lors de la mise à jour du code de confirmation' });
+        }
   };
 
   

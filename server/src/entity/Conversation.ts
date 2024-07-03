@@ -1,10 +1,10 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, ObjectId } from 'typeorm';
 import { User } from './User';
 import { HistoricCall } from './HistoricCall';
 @Entity()
 export class Conversation {
   @PrimaryGeneratedColumn()
-  id!: number;
+  id!: ObjectId;
 
   @Column()
   message!: string;

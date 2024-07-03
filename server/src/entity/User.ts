@@ -1,4 +1,4 @@
-import { Entity, ObjectIdColumn, ObjectId, Column , OneToMany } from "typeorm";
+import { Entity, ObjectIdColumn, ObjectId, Column , OneToMany, PrimaryColumn, CreateDateColumn, UpdateDateColumn } from "typeorm";
 import { Conversation } from './Conversation';
 import { HistoricCall } from './HistoricCall';
 
@@ -8,19 +8,22 @@ export class User {
     id!: ObjectId
 
     @Column()
-    firstName!: string
+    fullName!: string
 
-    @Column()
-    lastName!: string
-
-    @Column()
+    @PrimaryColumn()
     email!: string
 
     @Column()
-    password!: string
+    confirmationCode!: number
 
     @Column()
     avatar!: string
+
+    @CreateDateColumn()
+    createdAt!: Date;
+
+    @UpdateDateColumn()
+    updatedAt!: Date;
 
     @OneToMany(() => Conversation, conversation => conversation.user)
     conversations!: Conversation[];
@@ -29,5 +32,6 @@ export class User {
     historicCalls!: HistoricCall[];
 
 }
+
 
 

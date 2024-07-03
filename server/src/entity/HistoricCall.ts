@@ -1,10 +1,10 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, OneToMany } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, OneToMany, ObjectId } from 'typeorm';
 import { User } from './User';
 import { Conversation } from './Conversation';
 @Entity()
 export class HistoricCall {
   @PrimaryGeneratedColumn()
-  id!: number;
+  id!: ObjectId;
 
   @Column()
   callType!: string;

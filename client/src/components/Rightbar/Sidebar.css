@@ -1,0 +1,12 @@
+.sidebarcontainer{
+    width: 328px;
+    min-height: 100vh;
+    background-color: #17202E ;
+    padding: 0px; /*16px normalement*/
+    border: 1px solid #26303f;
+}
+
+*{
+    color: white;
+
+}

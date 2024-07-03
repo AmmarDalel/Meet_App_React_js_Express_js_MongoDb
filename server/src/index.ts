@@ -1,22 +1,48 @@
 import express from "express";
 import http from "http";
+import dotenv from'dotenv' ;
 import { Server } from "socket.io";  // Importer le type `Server` de `socket.io`
-import router from "./Router/UserRouter";
+import authRoutes from "./Router/authRoutes";
+import verifyCodeRoutes from './Router/verifyConfirmationCode' ;
 import "reflect-metadata";
+import cors from "cors";
 
 // Créer une application express
 const app = express();
 const server = http.createServer(app);
 const port = 5000;
 
+//pour accéder au var d'environnements situées dans le fichier .env
+dotenv.config();
+
+
 // Utiliser le router
-app.use(router);
+//app.use("/api/users",authRoutes);
+
+let options={
+  origin: 'http://localhost:5173', // Remplacez par l'URL de votre front-end
+  methods: ['GET', 'POST'], // Méthodes HTTP autorisées
+  allowedHeaders:['Access-Control-Allow-Headers', 'Access-Control-Allow-Origin', 'Content-Type',] ,
+  /*Le serveur doit répondre à cette requête OPTIONS avec les en-têtes CORS appropriés 
+  (Access-Control-Allow-Origin, Access-Control-Allow-Methods, Access-Control-Allow-Headers, etc.)
+   pour autoriser le navigateur à envoyer la vraie requête.
+  optionsSuccessStatus: 200*/
+}
+
+app.use(express.json());
+
+app.use(cors(options));
+//app.options('*', cors()); // include before other routes
+
+app.use('/api/users/authent',authRoutes);
+app.use('/api/users/verifycode' ,verifyCodeRoutes) ;
 
 // Configurer `socket.io` avec les types appropriés
 const io = new Server(server, {
 	cors: {
-		origin: "http://localhost:5173",
-		methods: ["GET", "POST"]
+		origin: "http://localhost:5173/",
+		methods: ["GET", "POST"] ,
+
 	}
 });
 
@@ -32,11 +58,11 @@ interface SocketData {
 }
 
 // Gérer les événements de connexion
-io.on("connection", (socket: SocketData) => {
-  console.log(`Client connected: ${socket.id}`);
-
+/*io.on("connection", (socket: SocketData) => {
+  const id=socket.id ;
+  console.log(id)
   // Émettre l'ID du socket au client
-  socket.emit("me", socket.id);
+  socket.emit("me", id);
 
   // Gérer la déconnexion du client
   socket.on("disconnect", () => {
@@ -44,25 +70,7 @@ io.on("connection", (socket: SocketData) => {
     socket.broadcast.emit("callEnded");
   });
 });
+*/
 
 // Démarrer le serveur
 server.listen(port, () => console.log(`Server is running on port ${port}`));
-
-
-
-
-/*import "reflect-metadata";
-import express  from "express";
-
-import router from "./Router/UserRouter";
-
-const app = express();
-const port = 3000;
-
-app.use(router);
-
-  app.listen(port, () => {
-    console.log(`Server is running on http://localhost:${port}`);
-  });
-
-*/

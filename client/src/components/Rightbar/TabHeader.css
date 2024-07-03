@@ -1,0 +1,51 @@
+.tabheadercontainer{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width:100% ;
+    height: 80px;
+    border: 1px solid  #26303f;
+    gap: 16px;
+}
+
+
+
+.componentbuttoncontainer{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 296px;
+    height: 56px;
+    border-radius: 10px;
+    background-color: #26303f;
+    padding-left: 4px;
+    padding-right: 4px;
+}
+
+.buttonheader{
+    /* Button 01 */
+/* Auto layout */
+display: flex;
+flex-direction: row;
+justify-content: center;
+align-items: center;
+padding: 0px;
+gap: 4px;
+width: 142px;
+height: 48px;
+left: 4px;
+top: 4px;
+border-radius: 8px;
+font-size: 12px;
+cursor: pointer;
+}
+
+.redpoint{
+    width: 6px;
+    height: 6px;
+    background-color: red;
+    border-radius: 70%;
+    margin: 7px;
+}
+
+/* Leave Meeting */
