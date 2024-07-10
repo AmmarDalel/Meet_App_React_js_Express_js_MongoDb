@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import { getUserRepository } from "../BdConnection";
+import session from '../types/express-session'; // Assurez-vous d'importer votre fichier de déclaration de types
 
 let userRepository = getUserRepository();
 
@@ -19,7 +20,9 @@ export const verifyConfirmationCode = async (req: Request, res: Response) => {
 
         // Vérifier si le code de confirmation correspond
         if (user.confirmationCode == confirmationCode) {
-            return res.status(200).json({ message: 'Code de confirmation correct, utilisateur confirmé' });
+    
+        return res.status(200).json({ message: 'Code de confirmation correct, utilisateur confirmé' });
+
         } else {
             return res.status(400).json({ message: 'Code de confirmation incorrect' });
         }

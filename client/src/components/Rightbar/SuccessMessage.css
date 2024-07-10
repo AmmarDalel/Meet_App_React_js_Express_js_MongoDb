@@ -1,0 +1,26 @@
+.container1{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    width: 296px;
+    height: 140px;
+    border: 2px solid  #26303f;
+    margin-left: auto;
+    margin-right: auto;
+
+}
+
+.message{
+    text-align: center;
+    font-size: 12px;
+    font-weight: 400;
+}
+
+.container2{
+    margin-top: 10%;
+    display: flex;
+    justify-content: center;
+    column-gap: 10px;
+    
+}

@@ -22,18 +22,18 @@
 }
 
 
-.formcontainer header{
+.formheader {
     padding: 16px;
 }
 
-.formcontainer h2{
+.formheader h2{
     font-size: 18px;
     font-weight: 500;
     color: #D1D5DB;
     text-align: center;
 }
 
-.formcontainer h4{
+.formheader h4{
     font-size: 12px;
     font-weight: 400;
     color: #6B7280;
@@ -140,3 +140,4 @@
     font-size: 12px;
 
 }
+

@@ -6,10 +6,32 @@ import { FindOneOptions } from 'typeorm';
 
 let userRepository = getUserRepository();
 
-export class UserController {
 
+export const getByEmailName = async (req: Request, res: Response) => {
+  const { fullName, email } = req.body;
+  console.log('req.body : ',req.body) ;
+
+  console.log('from getByEmail !!!!!!');
+  console.log(email) ;
+  console.log(fullName) ;
+  try {
+      if(userRepository!=null){
+
+      const user = await userRepository.findOne({ where: { fullName , email} });     
+      if (!user) {
+        console.log('User not found');
+      res.status(404).json({ message: 'User not found' });
+    } else {
+      console.log('User from get user ' , user);
+      res.json(user);
+    }
+  }
+  } catch (error) {
+    res.status(500).json({ message: 'Internal server error' });
+  }
+};
   
-  static getAll = async (req: Request, res: Response) => {
+  export const getAll = async (req: Request, res: Response) => {
 
     if(userRepository!=null){
         const users = await userRepository.find();
@@ -20,9 +42,7 @@ export class UserController {
 
   };
 
-
-
-  static update = async (req: Request, res: Response) => {
+  export const update = async (req: Request, res: Response) => {
     const id = req.params.id;
     const { name, email } = req.body;
     let user;
@@ -37,7 +57,7 @@ export class UserController {
     res.json(user);
   };
 
-  static getById = async (req: Request, res: Response) => {
+  export const getById = async (req: Request, res: Response) => {
     const id = req.params.id || 0 ;
     try {
         if(userRepository!=null){
@@ -53,10 +73,8 @@ export class UserController {
       res.status(500).json({ message: 'Internal server error' });
     }
   };
-  
-  
 
-  static create = async (req: Request, res: Response) => {
+  export const create = async (req: Request, res: Response) => {
     const { name, email } = req.body;
     const user = new User();
     user.fullName = name;
@@ -68,7 +86,7 @@ export class UserController {
     }
   };
 
-  static delete = async (req: Request, res: Response) => {
+  export const delet = async (req: Request, res: Response) => {
     const id = req.params.id;
     let user: User;
     console.log("hello from delete user")
@@ -81,7 +99,7 @@ export class UserController {
     res.json({ message: 'User deleted successfully' });
   };
 
-  static updateConfirmationCode = async (req: Request, res: Response) => {
+  export const updateConfirmationCode = async (req: Request, res: Response) => {
     const { email, confirmationCode } = req.body;
 
         try {
@@ -110,4 +128,4 @@ export class UserController {
   };
 
   
-}
+

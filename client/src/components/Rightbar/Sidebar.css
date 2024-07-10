@@ -1,8 +1,9 @@
 .sidebarcontainer{
+    position:absolute;
     width: 328px;
-    min-height: 100vh;
+    height: 100%;
     background-color: #17202E ;
-    padding: 0px; /*16px normalement*/
+    padding: 0px; 
     border: 1px solid #26303f;
 }
 

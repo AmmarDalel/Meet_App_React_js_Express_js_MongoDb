@@ -4,8 +4,11 @@ import dotenv from'dotenv' ;
 import { Server } from "socket.io";  // Importer le type `Server` de `socket.io`
 import authRoutes from "./Router/authRoutes";
 import verifyCodeRoutes from './Router/verifyConfirmationCode' ;
+import userRoutes from './Router/UserRouter' ;
 import "reflect-metadata";
 import cors from "cors";
+import  Session  from "express-session";
+import cookieParser from 'cookie-parser';
 
 // Créer une application express
 const app = express();
@@ -30,12 +33,25 @@ let options={
 }
 
 app.use(express.json());
-
 app.use(cors(options));
+app.use(cookieParser());
+
 //app.options('*', cors()); // include before other routes
 
 app.use('/api/users/authent',authRoutes);
 app.use('/api/users/verifycode' ,verifyCodeRoutes) ;
+app.use('/api/users/verifyuser',userRoutes) ;
+
+app.use(Session({
+  secret: 'votre_secret',
+  resave:false,
+  saveUninitialized:false,
+  cookie:{
+    secure:false,
+    maxAge:1000*60*60*24
+  }
+
+}))
 
 // Configurer `socket.io` avec les types appropriés
 const io = new Server(server, {
