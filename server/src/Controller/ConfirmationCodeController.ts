@@ -1,8 +1,9 @@
 import { Request, Response } from 'express';
 import { getUserRepository } from "../BdConnection";
-import session from '../types/express-session'; // Assurez-vous d'importer votre fichier de déclaration de types
+import jwt from 'jsonwebtoken' ;
 
 let userRepository = getUserRepository();
+const accessTokenSecret ='VjFDEnjtgzkqi1%PM245*kiz@b' ;
 
 // Route pour vérifier le code de confirmation
 export const verifyConfirmationCode = async (req: Request, res: Response) => {
@@ -20,8 +21,9 @@ export const verifyConfirmationCode = async (req: Request, res: Response) => {
 
         // Vérifier si le code de confirmation correspond
         if (user.confirmationCode == confirmationCode) {
-    
-        return res.status(200).json({ message: 'Code de confirmation correct, utilisateur confirmé' });
+            console.log('userid from confirmation code controller :', user.id)
+        const token = jwt.sign({ userid:user.id , fullname: user.fullName,  email: user.email },accessTokenSecret );
+        return res.status(200).json({token , message: 'Code de confirmation correct, utilisateur confirmé' });
 
         } else {
             return res.status(400).json({ message: 'Code de confirmation incorrect' });

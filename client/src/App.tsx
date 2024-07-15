@@ -1,6 +1,5 @@
 import { useEffect } from 'react'
 import './App.css'
-import socketIO from 'socket.io-client' ;
 import { Provider } from 'react-redux';
 import { store } from './Redux/Store';
 import { CookiesProvider } from 'react-cookie';
@@ -8,26 +7,27 @@ import { CookiesProvider } from 'react-cookie';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Authentificate from './Authentificate';
 import Home from './Home';
+import Call from './Call';
 
-const WS='localhost:5000' ;
-
+import ConfirmationCode from './ConfirmationCode';
+import CorrectCode from './CorrectCode';
+import IncorrectCode from './IncorrectCode';
+import StartCall from './StartCall';
 function App() {
-
-  useEffect(()=>{
-    socketIO(WS);
-  },[]);
-
-
+ 
 
   return (
     <CookiesProvider defaultSetOptions={{ path: '/' }}>
       <Provider store={store}  >
-        <Router>
             <Routes>
               <Route path='/' element={<Home/>}/>
               <Route path="/authentificate" element={<Authentificate />} />
+              <Route path='/ConfirmationCode' element={<ConfirmationCode/>}/>
+              <Route path='/ConfirmationCode/:userid/CorrectCode' element={<CorrectCode/>}/>
+              <Route path='/ConfirmationCode/IncorrectCode' element={<IncorrectCode/>}/>
+              <Route path='/:userid/StartCall/' element={<StartCall/>}/>
+              <Route path="/call/:id" element={<Call />} />
             </Routes>
-        </Router> 
       </Provider> 
      </CookiesProvider>   
 

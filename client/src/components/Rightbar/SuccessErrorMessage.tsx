@@ -6,7 +6,6 @@ import ErrorMessage from './ErrorMessage';
 
 function SuccessErrorMessage() {
     const correctCode = useSelector((state: RootState) => state.user.correctCode);
-
   return (
    <>
     {

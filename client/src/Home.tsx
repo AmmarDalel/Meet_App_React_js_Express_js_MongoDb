@@ -1,72 +1,56 @@
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import RoomContainer from './components/Room/RoomContainer';
+import {EmptyRoomContainer} from './components/Room/RoomContainer';
 
 import Cookies from 'universal-cookie';
-import RightSidebar from './components/Rightbar/Sidebar';
 import { useDispatch } from 'react-redux';
 import { AppDispatch } from './Redux/Store';
-import { setauthentificate, setclosesuccessmessage, setCodeSent } from './Redux/features/user';
+import { setauthentificate, setclosesuccessmessage, setclosesuccessmessagefromHome, setCodeSent, setcorrectCode } from './Redux/features/user';
+import { jwtDecode } from 'jwt-decode';
+import StartCall from './StartCall';
 
 function Home() {
     const dispatch = useDispatch<AppDispatch>();
     const cookies = new Cookies();
     const navigate = useNavigate();
-
-    // verify user
-  const handlVerify = async (userAccount:any) => {
-   const fullname=userAccount.fullname ;
-   const email=userAccount.email ;
-    console.log('from handleVerify')
-    if (fullname && email) {
-
-      try {
-        // Appel API pour authentification
-        const response = await fetch('http://localhost:5000/api/users/verifyuser/getuser', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
-          body: JSON.stringify({ fullName: fullname, email: email }),
-        });
-
-        const data = await response.json();
-
-        if (data.message === 'User not found') {
-            dispatch(setCodeSent(false));
-            dispatch(setclosesuccessmessage(false));
-            dispatch(setauthentificate(false));
-            navigate('/authentificate');
-        }
-
-        if (response.ok) {
-            dispatch(setCodeSent(true));
-            dispatch(setclosesuccessmessage(true));
-            dispatch(setauthentificate(true));
-        } else {
-          // Gérer les erreurs d'authentification
-          console.error("Error");
-        }
-      } catch (error) {
-        dispatch(setCodeSent(false));
-        dispatch(setclosesuccessmessage(false));
-        dispatch(setauthentificate(false));
-        navigate('/authentificate');
-      }
-    } else {
-        dispatch(setCodeSent(false));
-        dispatch(setclosesuccessmessage(false));
-        dispatch(setauthentificate(false));
-        navigate('/authentificate');
-    }
-  };
+    const usertoken=cookies.get('user') ;
 
     useEffect(() => {
-        const userAccount = cookies.get('useraccount');
-        
+        const userAccount = cookies.get('user');
+
         if (!userAccount) {
             navigate('/authentificate');
         }
         else{
-            handlVerify(userAccount) ;
+           try{
+            const userdata = jwtDecode(usertoken.token); // decode your token here
+            const email = String(userdata.email);
+            const fullname = String(userdata.fullname);
+            const userid = String(userdata.userid);
+        
+            if (fullname && email && userid) {
+                    dispatch(setCodeSent(true));
+                    dispatch(setclosesuccessmessage(false));
+                    dispatch(setcorrectCode(true));
+                    dispatch(setauthentificate(true));
+                    dispatch(setclosesuccessmessagefromHome(true));
+                    navigate(`/${userid}/StartCall/`) ;
+
+
+            } else {
+                dispatch(setCodeSent(false));
+                dispatch(setcorrectCode(false));
+                dispatch(setclosesuccessmessage(false));
+                dispatch(setauthentificate(false));
+                navigate('/authentificate');
+            }
+        }catch(error){
+              dispatch(setCodeSent(false));
+              dispatch(setcorrectCode(false));
+              dispatch(setclosesuccessmessage(false));
+              dispatch(setauthentificate(false));
+              navigate('/authentificate');
+           }
         }
        
     }, [cookies , navigate]);
@@ -75,8 +59,9 @@ function Home() {
     return (
         <>
             <div className='appcontainer'> 
-                <RoomContainer/>
-                <RightSidebar/>              
+                <EmptyRoomContainer/>
+                <StartCall/>
+                        
             </div>
           
 

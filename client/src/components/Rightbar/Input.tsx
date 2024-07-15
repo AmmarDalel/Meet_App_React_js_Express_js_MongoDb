@@ -11,7 +11,7 @@ function Input({title ,inputtype , value , changevalue }:inputinterface){
             <label className='label'>{title}</label>
             <input type={inputtype} className='input'  placeholder={title} value={value} onChange={changevalue} required />
         </div>
-    )
+    ) 
 }
 
 export default Input ;

@@ -38,7 +38,7 @@ export class ConversationController {
     }
   };
 
-  static create = async (req: Request, res: Response) => {
+ /* static create = async (req: Request, res: Response) => {
     const { message, timestamp, userId } = req.body;
     const conversation = new Conversation();
     conversation.message = message;
@@ -56,7 +56,7 @@ export class ConversationController {
       res.status(500).json({ message: 'Internal server error' });
     }
   };
-
+*/
   static delete = async (req: Request, res: Response) => {
     const id = req.params.id;
     try {

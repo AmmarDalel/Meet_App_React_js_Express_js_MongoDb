@@ -8,10 +8,12 @@ import GridViewIcon from '@mui/icons-material/GridView';
 import PanToolIcon from '@mui/icons-material/PanTool';
 import InsertEmoticonIcon from '@mui/icons-material/InsertEmoticon';
 import { Button } from '@mui/material';
+import InputSlider from './InputSlider';
 function ControllBar() {
   return (
     <footer className='ControllBarContainer'>
         <div className='soncontainer'>
+          <InputSlider/>
         </div>
         <div className='paramcontainer'>
           <div className='voicecontainer'>

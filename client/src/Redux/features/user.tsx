@@ -5,25 +5,31 @@ interface UserState {
     emailError: string;
     incorrectFullname: boolean;
     remplirChamp: string;
+    id:string|null ;
     email: string;
     fullname: string;
     isCodeSent :boolean ;
     correctCode:boolean ;
     authentificate:boolean;
     closesuccessmessage:boolean;
-    
+    closesuccessmessagefromHome:boolean ;
+    callId :string ;
+
   }
   
   const initialState: UserState = {
     emailError: '',
     incorrectFullname: false,
     remplirChamp: '',
+    id:null,
     email: '',
     fullname: '',
     isCodeSent:false ,
     correctCode:false ,
     authentificate:false,
     closesuccessmessage:false,
+    closesuccessmessagefromHome :true ,
+    callId:'' ,
   };
 
 const userSlice = createSlice({
@@ -51,13 +57,22 @@ const userSlice = createSlice({
     setclosesuccessmessage:(state, action: PayloadAction<boolean>) => {
       state.closesuccessmessage = action.payload;
   },
-    login: (state, action: PayloadAction<{ fullname: string; email: string }>) => {
+  setclosesuccessmessagefromHome:(state, action: PayloadAction<boolean>) => {
+    state.closesuccessmessagefromHome = action.payload;
+},
+  login: (state, action: PayloadAction<{ id:string ;fullname: string; email: string }>) => {
+        state.id=action.payload.id ;
         state.fullname = action.payload.fullname;
         state.email = action.payload.email;
-      },
+      
+   },
+  setCallId: (state, action: PayloadAction<string>) => {
+        state.callId = action.payload;
+    },
    
   },
+
 });
 
-export const { setEmailError, setIncorrectFullname, setRemplirChamp,setCodeSent,setcorrectCode ,setauthentificate , login , setclosesuccessmessage} = userSlice.actions;
+export const { setEmailError, setIncorrectFullname, setRemplirChamp,setCodeSent,setcorrectCode ,setauthentificate , login , setclosesuccessmessage , setclosesuccessmessagefromHome , setCallId} = userSlice.actions;
 export default userSlice.reducer;

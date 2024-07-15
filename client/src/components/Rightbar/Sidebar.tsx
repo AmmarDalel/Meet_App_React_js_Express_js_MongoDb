@@ -1,10 +1,10 @@
 import React from 'react';
 import './Sidebar.css';
 import TabHeader from './TabHeader';
-import Form from './Form';
+//import Form from './Form';
 import './Form.css' ;
 
-function RightSidebar() {
+function RightSidebar({children}:{children:any}) {
   return (
     <div className='sidebarcontainer'>
       <TabHeader/>
@@ -18,7 +18,9 @@ function RightSidebar() {
                 <h2>Building your immersive portfolio using virtual words</h2>
                 <h4>​In this interactive event, we will talk about how virtual worlds can be the next medium to deliver immersive portfolio for designers, photographer, & story tellers.</h4>
            </header>
-      <Form/>
+
+           {children}
+      {/*<Form/>*/}
     </div>
   )
 }

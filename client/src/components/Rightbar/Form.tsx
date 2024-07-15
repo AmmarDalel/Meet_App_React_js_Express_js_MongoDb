@@ -10,14 +10,13 @@ import StartCallPanel from './StartCallPanel';
 function Form() {
   const authentificate=useSelector((state:RootState)=>state.user.authentificate);
   const closesuccessmessage=useSelector((state:RootState)=>state.user.closesuccessmessage);
-  console.log(closesuccessmessage)
+  //const closesuccessmessagefromHome=useSelector((state:RootState)=>state.user.closesuccessmessagefromHome);
+
   return (
     <>
-      {!authentificate && <Login/>}     
-      {authentificate && !closesuccessmessage && <SuccessErrorMessage/>} 
-      {console.log(closesuccessmessage)}   
-      {authentificate && closesuccessmessage && <StartCallPanel/> }
-      {console.log(closesuccessmessage)}
+      {!authentificate && <Login/>}  
+      {authentificate && closesuccessmessage  && <SuccessErrorMessage/>} 
+      {(authentificate && !closesuccessmessage)  && <StartCallPanel/> }
     </>
     ) 
 }

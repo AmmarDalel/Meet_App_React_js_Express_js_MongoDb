@@ -1,6 +1,7 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, ObjectId } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, ObjectId, OneToMany } from 'typeorm';
 import { User } from './User';
-import { HistoricCall } from './HistoricCall';
+import { Message } from './Message';
+//import { HistoricCall } from './Call';
 @Entity()
 export class Conversation {
   @PrimaryGeneratedColumn()
@@ -12,11 +13,19 @@ export class Conversation {
   @Column()
   timestamp!: Date;
 
-  @ManyToOne(() => User, user => user.conversations)
+  @OneToMany(() => Message, (message) => message.conversation)
+  messages!: Message[];
+
+  /*@ManyToOne(() => User, user => user.conversations , {
+    cascade: ["insert", "update"],
+})
   @JoinColumn({ name: 'userId' })
   user!: User;
 
-  @ManyToOne(() => HistoricCall, HistoricCall => HistoricCall.conversations)
+  @ManyToOne(() => HistoricCall, HistoricCall => HistoricCall.conversations , {
+    cascade: ["insert", "update"],
+})
   @JoinColumn({ name: 'id' })
-  call!: HistoricCall;
+  call!: HistoricCall;*/
+
 }

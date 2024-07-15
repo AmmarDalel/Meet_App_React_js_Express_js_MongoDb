@@ -4,7 +4,7 @@ import './Form.css';
 import { Button } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../../Redux/Store';
-import { setauthentificate, setclosesuccessmessage, setCodeSent } from '../../Redux/features/user';
+import { setauthentificate, setclosesuccessmessage, setclosesuccessmessagefromHome, setCodeSent } from '../../Redux/features/user';
 import { useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
 import Cookies from 'universal-cookie';
@@ -16,18 +16,16 @@ function SuccessMessage() {
 
   const close=()=>{
     dispatch(setclosesuccessmessage(true));
-  
+    dispatch(setclosesuccessmessagefromHome(false));
+
   }
   const cookies = new Cookies();
   const navigate = useNavigate();
 
   useEffect(() => {
-      const userAccount = cookies.get('useraccount');
+      const userAccount = cookies.get('user');
       if (userAccount) {
           navigate('/');
-          dispatch(setCodeSent(true));
-          dispatch(setclosesuccessmessage(true));
-          dispatch(setauthentificate(true));
       }
   }, [cookies, navigate]);
   return (

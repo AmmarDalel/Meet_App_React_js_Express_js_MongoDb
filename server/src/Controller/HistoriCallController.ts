@@ -1,81 +1,65 @@
-import { Request, Response } from 'express';
-import { HistoricCall } from '../entity/HistoricCall';
+import { Call } from '../entity/Call';
+import { getUserRepository ,getHistoricCallRepository} from '../BdConnection';
 
-import {getHistoricCallRepository } from "../BdConnection";
-import { FindOneOptions } from 'typeorm';
+let userRepository = getUserRepository();
+let historicCallRepository=getHistoricCallRepository() ;
 
-let historicCallRepository =getHistoricCallRepository() ;
+export const createHistoricCall = async ( callId:string ) => {
+  console.log('from create historiccall')
 
-export class HistoricCallController {
-  static getAll = async (req: Request, res: Response) => {
-    try {
-      if (historicCallRepository) {
-        const historicCalls = await historicCallRepository.find();
-        res.json(historicCalls);
-      } else {
-        res.status(500).json({ message: 'Repository not initialized' });
-      }
-    } catch (error) {
-      res.status(500).json({ message: 'Internal server error' });
+  // Obtenir les repositories nécessaires
+  //console.log('userid :', userid) ;
+    try{
+    
+    const historiccalltest = await historicCallRepository.find({ where: { callId: callId } });
+    console.log('historic call search : ',historiccalltest) ;
+    if(historiccalltest.length==0){
+      
+
+      // Créer une nouvelle instance de HistoricCall
+      const newHistoricCall = new Call();
+      newHistoricCall.callType = 'video';
+      newHistoricCall.callId = callId;
+      newHistoricCall.endTime = new Date();
+      newHistoricCall.duration = 3600; // durée en secondes
+    
+      //console.log('user from historic call controller : ',  newHistoricCall.users)
+
+
+
+      // Enregistrer la nouvelle instance de HistoricCall
+    try{
+      await historicCallRepository.save(newHistoricCall);
     }
-  };
-
-  static getById = async (req: Request, res: Response) => {
-    const id = req.params.id || 0;
-    try {
-      if (historicCallRepository) {
-        const historicCall = await historicCallRepository.findOne(id as FindOneOptions<HistoricCall>);
-        if (!historicCall) {
-          res.status(404).json({ message: 'Historic call not found' });
-        } else {
-          res.json(historicCall);
-        }
-      } else {
-        res.status(500).json({ message: 'Repository not initialized' });
-      }
-    } catch (error) {
-      res.status(500).json({ message: 'Internal server error' });
+    catch(error){
+      console.log(error) ;
     }
-  };
 
-  static create = async (req: Request, res: Response) => {
-    const { callType, timestamp, duration, userId } = req.body;
-    const historicCall = new HistoricCall();
-    historicCall.callType = callType;
-    historicCall.timestamp = timestamp;
-    historicCall.duration = duration;
-    // Assuming userId is provided in the request body
-    historicCall.user = userId;
-    try {
-      if (historicCallRepository) {
-        await historicCallRepository.save(historicCall);
-        res.json(historicCall);
-      } else {
-        res.status(500).json({ message: 'Repository not initialized' });
-      }
-    } catch (error) {
-      res.status(500).json({ message: 'Internal server error' });
+      console.log('New HistoricCall created with ID:', newHistoricCall.id);
+      
     }
-  };
 
-  static delete = async (req: Request, res: Response) => {
-    const id = req.params.id;
-    try {
-      if (historicCallRepository) {
-        const historicCall = await historicCallRepository.findOne(id as FindOneOptions<HistoricCall>);
-        if (!historicCall) {
-          res.status(404).json({ message: 'Historic call not found' });
-        } else {
-          await historicCallRepository.remove(historicCall);
-          res.json({ message: 'Historic call deleted successfully' });
-        }
-      } else {
-        res.status(500).json({ message: 'Repository not initialized' });
-      }
-    } catch (error) {
-      res.status(500).json({ message: 'Internal server error' });
+    console.log('Historic call exist ') ;
     }
-  };
-}
+    catch(error){
+      console.log(error)
+    }
 
-export default HistoricCallController ;
+  
+};
+
+export const AddUser = async (callId: string, userId: any, PeerId: string) => {
+  try {
+    // Trouver l'utilisateur pour l'association ManyToOne
+    const user = await userRepository.findOne(userId);
+    if (!user) {
+      console.log('User not found');
+      return;
+    }
+
+   
+
+  } catch (error) {
+    console.log('Error:', error);
+  }
+};

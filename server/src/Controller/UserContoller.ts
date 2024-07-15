@@ -79,10 +79,10 @@ export const getByEmailName = async (req: Request, res: Response) => {
     const user = new User();
     user.fullName = name;
     user.email = email;
-    if(userRepository!=null){
 
-    await userRepository.save(user);
-    res.json(user);
+    if(userRepository!=null){
+      await userRepository.save(user);
+      res.json(user);
     }
   };
 

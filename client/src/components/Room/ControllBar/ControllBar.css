@@ -16,6 +16,10 @@
     height: 68px;
     background-color: #26303f;
     border-radius: 8px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    
 }
 
 .paramcontainer{

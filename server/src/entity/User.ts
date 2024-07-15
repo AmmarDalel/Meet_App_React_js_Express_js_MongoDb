@@ -1,9 +1,10 @@
-import { Entity, ObjectIdColumn, ObjectId, Column , OneToMany, PrimaryColumn, CreateDateColumn, UpdateDateColumn } from "typeorm";
-import { Conversation } from './Conversation';
-import { HistoricCall } from './HistoricCall';
+import { Entity, ObjectIdColumn, ObjectId, Column , PrimaryColumn, CreateDateColumn, UpdateDateColumn, ManyToOne } from "typeorm";
+import { Room } from "./Room";
+//import { HistoricCall } from './Call';
 
 @Entity()
 export class User {
+    
     @ObjectIdColumn()
     id!: ObjectId
 
@@ -16,6 +17,9 @@ export class User {
     @Column()
     confirmationCode!: number
 
+    @Column({ nullable: true })
+    peerid!: string | null;
+
     @Column()
     avatar!: string
 
@@ -25,11 +29,18 @@ export class User {
     @UpdateDateColumn()
     updatedAt!: Date;
 
-    @OneToMany(() => Conversation, conversation => conversation.user)
+    @ManyToOne(() => Room, (room) => room.participants , ({ nullable: true }) )
+    room!: Room;
+
+   /* @OneToMany(() => Conversation, conversation => conversation.user , {
+        cascade: ["insert", "update"],
+    })
     conversations!: Conversation[];
   
-    @OneToMany(() => HistoricCall, historicCall => historicCall.user)
-    historicCalls!: HistoricCall[];
+    @OneToMany(() => HistoricCall, historicCall => historicCall.users ,{
+        cascade: ["insert", "update"],
+    })
+    historicCalls!: HistoricCall[];*/
 
 }
 

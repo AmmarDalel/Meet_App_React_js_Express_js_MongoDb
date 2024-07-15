@@ -1,22 +1,33 @@
-import React , { useState } from 'react'
+import React , { useContext, useState } from 'react'
 import InputComponent from './Input'; // Assurez-vous que le chemin vers InputComponent est correct
 import { Button } from '@mui/material';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import './StartCallPanel.css';
+import { CallContext } from '../../Context/CallContext';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../Redux/Store';
 
 function StartCallPanel() {
     const [targetid, setTargetid] = useState('');
     const [CopySessionId,setCopySessionId]=useState('hello');
+    const SessionId=useSelector((state:RootState)=>state.user.callId);
+
+    const {ws} =useContext(CallContext) ;
 
     const handleCopy=()=>{
       navigator.clipboard.writeText(CopySessionId);
       alert('copied');
     }
+
+    const StartCall=()=>{
+      console.log('hello from start call')
+      ws.emit('start-call') ;
+    }
   return (
     <div style={{ padding: '16px' }}>
       <label className='label'>Session Id</label>
       <div className='sessionidcontainer'>
-        <p >hello</p>
+        <p >{SessionId}</p>
         <ContentCopyIcon style={{cursor:'pointer', width:'20px',height:'20px'}} onClick={()=>{handleCopy()}}/>
       </div>
     <InputComponent
@@ -38,7 +49,9 @@ function StartCallPanel() {
           border:'none'
         
 
-        }}>Start Call</Button>
+        }}
+        onClick={()=>{StartCall()}}
+        >Start Call</Button>
     </div>
   )
 }

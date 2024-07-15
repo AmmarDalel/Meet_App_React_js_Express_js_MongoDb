@@ -4,7 +4,6 @@ import { User } from '../entity/User';
 import { SendMailOptions, SentMessageInfo, createTransport } from 'nodemailer';
 
 let userRepository = getUserRepository();
-
 export const authenticate = async (req: Request, res: Response) => {  
     const { fullName, email } = req.body;
     let user:User|null ;
@@ -22,7 +21,6 @@ export const authenticate = async (req: Request, res: Response) => {
 
     if(user2 && !user){
       res.status(500).json({ message: 'Incorrect  Full name !' });
-
     }
 
     else if (!user) {
@@ -33,7 +31,6 @@ export const authenticate = async (req: Request, res: Response) => {
     }
 
     const confirmationCode = Math.floor(100000 + Math.random() * 900000).toString();
-    console.log(confirmationCode);
 
     try {
        //send email to the user
@@ -58,11 +55,8 @@ export const authenticate = async (req: Request, res: Response) => {
             subject: 'Virtual Meeting ',
             text: `Confirmation code: ${confirmationCode}`,
           };
-          console.log('mailOptions : ',mailOptions)
           transporter.sendMail(mailOptions, function(error: Error | null, info: SentMessageInfo){
-            console.log(error)
             if (error) {
-              console.log('----------',error);
               if (error.message.includes('550 5.1.1')) {
                 return res.status(500).json({ message: 'Email address not found or cannot receive messages' });
               } else {
@@ -76,9 +70,7 @@ export const authenticate = async (req: Request, res: Response) => {
           });
           user.confirmationCode=parseInt(confirmationCode) ;
           await userRepository.save(user);
-
-          console.log('Email sent: ' + res);
-          res.status(200).json({ message: 'User successfully authenticated' });
+          res.status(200).json({ message: 'User successfully authenticated' ,user });
         }
 
     } catch (error) {

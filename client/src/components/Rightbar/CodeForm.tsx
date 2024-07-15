@@ -1,17 +1,20 @@
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import type { AppDispatch, RootState } from '../../Redux/Store';
-import { setauthentificate, setcorrectCode } from '../../Redux/features/user';
+import { setauthentificate, setclosesuccessmessage, setclosesuccessmessagefromHome, setcorrectCode } from '../../Redux/features/user';
 import Cookies from 'universal-cookie';
+import { jwtDecode } from "jwt-decode";
+import { useNavigate } from 'react-router-dom';
 
 function CodeForm() {
+    const navigate = useNavigate();
     const [confirmationCode, setConfirmationCode] = useState('');
     const dispatch = useDispatch<AppDispatch>();
 
     // Utiliser Redux pour récupérer les valeurs d'email et de fullname
     const email = useSelector((state: RootState) => state.user.email);
     const fullname = useSelector((state: RootState) => state.user.fullname);
-
+    const id=useSelector((state:RootState)=>state.user.id) ;
 
     // Envoyer le code de confirmation au serveur
     const handleCodeSubmit = async (e: React.FormEvent) => {
@@ -31,16 +34,23 @@ function CodeForm() {
             });
 
             if (response.ok) {
+                const data = await response.json();
                 dispatch(setcorrectCode(true));
                 dispatch(setauthentificate(true));
+                dispatch(setclosesuccessmessagefromHome(false));
                 console.log('Code correct');
+                navigate(`/ConfirmationCode/:${id}/CorrectCode`) ;
+                const token = data.token;
                 const cookies = new Cookies(null, { path: '/' });
-                cookies.set('useraccount', {fullname , email},{maxAge:24 * 60 * 60}); //reste valable 24h
+                cookies.set('user', {token},{maxAge:24 * 60 * 60}); //reste valable 24h
+
                
             } else {
                 dispatch(setcorrectCode(false));
                 dispatch(setauthentificate(true));
+                console.log('hellllo')
                 console.error('Erreur d\'authentification');
+                navigate('/ConfirmationCode/IncorrectCode') ;
             }
         } catch (error) {
             console.error(error);
@@ -64,7 +74,7 @@ function CodeForm() {
                 </div>
             
                 <div className='submitcontainer submitcontainerCode'>
-                    <button className='submitbutton' type='submit'>
+                    <button className='submitbutton' type='submit' onClick={handleCodeSubmit}>
                         Submit
                     </button>
                 </div>
