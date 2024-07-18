@@ -1,31 +1,17 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, ObjectId, OneToMany } from 'typeorm';
-import { User } from './User';
-import { Message } from './Message';
-//import { HistoricCall } from './Call';
+import { Entity, Column , ObjectId , ObjectIdColumn, CreateDateColumn } from 'typeorm';
+
 @Entity()
 export class Conversation {
-  @PrimaryGeneratedColumn()
-  id!: ObjectId;
 
-  @Column()
-  message!: string;
+  @ObjectIdColumn()
+  id!: string;
 
-  @Column()
+  @CreateDateColumn()
   timestamp!: Date;
 
-  @OneToMany(() => Message, (message) => message.conversation)
-  messages!: Message[];
-
-  /*@ManyToOne(() => User, user => user.conversations , {
-    cascade: ["insert", "update"],
-})
-  @JoinColumn({ name: 'userId' })
-  user!: User;
-
-  @ManyToOne(() => HistoricCall, HistoricCall => HistoricCall.conversations , {
-    cascade: ["insert", "update"],
-})
-  @JoinColumn({ name: 'id' })
-  call!: HistoricCall;*/
+  @Column()
+  messages!: String[];
 
 }
+
+

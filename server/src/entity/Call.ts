@@ -3,13 +3,10 @@ import { Entity, PrimaryGeneratedColumn, Column, OneToMany, ObjectId, CreateDate
 @Entity()
 export class Call {
   @ObjectIdColumn()
-  id!: ObjectId
+  id!: string ;
 
   @Column()
   callType!: string;
-
-  @Column()
-  callId!: string;
 
   @CreateDateColumn()
   createdAt!: Date;
@@ -20,13 +17,5 @@ export class Call {
   @Column()
   duration!: number;
 
- /* @OneToMany(()=>User , user=>user.id , {
-    cascade: ["insert", "update"],
-})
-  users!:User[] ;
-  
-  @OneToMany(() => Conversation, conversation => conversation.id , {
-    cascade: ["insert", "update"],
-})
-  conversations!: Conversation[];*/
+
 }

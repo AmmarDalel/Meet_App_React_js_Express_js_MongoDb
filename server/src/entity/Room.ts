@@ -1,28 +1,39 @@
-import { Entity, Column, ObjectId, CreateDateColumn, ObjectIdColumn , OneToOne, JoinColumn, OneToMany } from 'typeorm';
+import { Entity, Column, CreateDateColumn , OneToOne, OneToMany, PrimaryColumn, PrimaryGeneratedColumn, ObjectIdColumn, UpdateDateColumn } from 'typeorm';
 import { User } from './User';
-import { Call } from './Call';
-import { Conversation } from './Conversation';
+
 @Entity()
 export class Room {
-  @ObjectIdColumn()
-  id!: ObjectId
+    
+    @ObjectIdColumn()
+    id!: string
+ 
+    @PrimaryColumn()
+    roomId!:string ;
 
-  @CreateDateColumn()
-  createdAt!: Date;
+    @Column()
+    type!:string ;
 
-  @Column()
-  type!:string ;
+    @CreateDateColumn()
+    createdAt!: Date;
 
-  @OneToOne(() => User, ({ nullable: true }))
-  createdBy!: User;
+    @UpdateDateColumn()
+    updatedAt!: Date;
 
-  @OneToMany(() => User, (user) => user.room , ({ nullable: true }))
-  participants!: User[];
+    @OneToOne(() => User , (user)=>user.id , ({ nullable: true , cascade:true }) )
+    createdBy!: User ;
+    
+  
+    @Column()
+    participants!: String[];
+  
+    @Column()
+    call!: string;
 
-  @OneToOne(() => Call , ({ nullable: true }))
-  call!: Call;
-
-  @OneToOne(() => Conversation, ({ nullable: true }))
-  conversation!: Conversation;
+    @Column()
+    conversation!: string;
+ 
 
 }
+
+
+

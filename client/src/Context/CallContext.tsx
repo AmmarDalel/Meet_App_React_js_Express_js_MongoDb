@@ -15,21 +15,23 @@ interface CallProviderProps {
   }
 export const CallProvider: React.FC<CallProviderProps> =({children})=>{
     const navigate=useNavigate() ;
-    const [me,setMe]=useState<Peer>() ;
-
-    const enterCall=({callId}:{callId:'string'})=>{
-        console.log({callId}) ;
-        navigate(`/call/${callId}`) ;
+    const [me , setMe] =useState<Peer>() ;
+  const enterRoom=({roomId}:{roomId:"String"})=>{
+        console.log({roomId}) ;
+        navigate(`/call/${roomId}`)
     }
-    useEffect(()=>{
-        const meId=uuidV4();
-        const peer=new Peer(meId) ;
-        setMe(peer) ;
-        console.log('CallProvider useeffect       :  ',peer)
-        
-        ws.on("call-created",enterCall) ; 
-      
-    },[]);
+
+    const getUsers=({participants}:{participants:string[]})=>{
+      console.log({participants}) ;
+    }
+   useEffect(()=>{
+    const meId=uuidV4() ;
+    const peer=new Peer(meId) ;
+    setMe(peer) ;
+    ws.on("room-create",enterRoom) ;
+    ws.on("get-users",getUsers)
+   } ,[])
+  
 
     return <CallContext.Provider value={{ ws , me }}>{children}</CallContext.Provider>;
 }

@@ -3,12 +3,26 @@
     width:100%;
     height: 100%;
     background-color: #101826 ;
-    padding: 0px; /*16px normalement*/
+    border: 1px solid #26303f;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-direction: column;
+
+}
+
+.EmptyRoomContainer{
+    position: absolute;
+    width:100%;
+    height: 100%;
+    background-color: #101826 ;
     border: 1px solid #26303f;
     display: flex;
     justify-content: center;
     align-items: center;
 }
+
+
 
 .logoContainer{
     margin-right: 15%;

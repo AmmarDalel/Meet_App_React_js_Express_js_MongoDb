@@ -2,11 +2,9 @@ import { AppDataSource } from "./ormconfig";
 import { User } from "./entity/User";
 import { Conversation } from "./entity/Conversation";
 import { Call } from "./entity/Call";
-import { Repository } from "typeorm";
+import { Room } from "./entity/Room";
+import { Message } from "./entity/Message";
 
-let userRepository: Repository<User> | null = null;
-let conversationRepository: Repository<Conversation> | null = null;
-let historiccallRepository :  Repository<Call> | null = null;
 
 AppDataSource.initialize().then(async () => {
   console.log("Data Source has been initialized!");
@@ -19,3 +17,5 @@ AppDataSource.initialize().then(async () => {
 export const getUserRepository = () => AppDataSource.getRepository(User); 
 export const getConversationRepository=()=>AppDataSource.getRepository(Conversation);
 export const getHistoricCallRepository=()=>AppDataSource.getRepository(Call);
+export const getRoomRepository=()=>AppDataSource.getRepository(Room);
+export const getMessageRepository=()=>AppDataSource.getRepository(Message);

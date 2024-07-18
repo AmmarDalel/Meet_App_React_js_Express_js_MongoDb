@@ -1,11 +1,11 @@
-import { Entity, Column, ObjectId, CreateDateColumn, ObjectIdColumn, OneToOne } from 'typeorm';
+import { Entity, Column, CreateDateColumn, ObjectIdColumn, OneToOne } from 'typeorm';
 import { Conversation } from './Conversation';
 
 @Entity()
 export class Message {
 
   @ObjectIdColumn()
-  id!: ObjectId
+  id!: string ;
 
   @Column()
   content!:string ;
@@ -16,8 +16,8 @@ export class Message {
   @Column()
   type!:string ;
 
-  @OneToOne(() => Conversation, (conversation) => conversation.messages , ({ nullable: true }))
-  conversation!: Conversation;
+  @Column()
+  conversation!: string;
 
 
 }

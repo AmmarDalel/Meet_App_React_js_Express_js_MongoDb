@@ -13,6 +13,7 @@ import ConfirmationCode from './ConfirmationCode';
 import CorrectCode from './CorrectCode';
 import IncorrectCode from './IncorrectCode';
 import StartCall from './StartCall';
+import Room from './Room';
 function App() {
  
 
@@ -27,6 +28,7 @@ function App() {
               <Route path='/ConfirmationCode/IncorrectCode' element={<IncorrectCode/>}/>
               <Route path='/:userid/StartCall/' element={<StartCall/>}/>
               <Route path="/call/:id" element={<Call />} />
+              <Route path='/call/:callId' element={<Room/>}/>
             </Routes>
       </Provider> 
      </CookiesProvider>   

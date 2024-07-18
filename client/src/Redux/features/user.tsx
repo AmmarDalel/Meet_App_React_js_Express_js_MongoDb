@@ -14,6 +14,7 @@ interface UserState {
     closesuccessmessage:boolean;
     closesuccessmessagefromHome:boolean ;
     callId :string ;
+    isInRoom:boolean ;
 
   }
   
@@ -30,6 +31,7 @@ interface UserState {
     closesuccessmessage:false,
     closesuccessmessagefromHome :true ,
     callId:'' ,
+    isInRoom:false ,
   };
 
 const userSlice = createSlice({
@@ -69,10 +71,14 @@ const userSlice = createSlice({
   setCallId: (state, action: PayloadAction<string>) => {
         state.callId = action.payload;
     },
+    setIsInRoom: (state, action: PayloadAction<boolean>) => {
+      state.isInRoom = action.payload;
+  },
+
    
   },
 
 });
 
-export const { setEmailError, setIncorrectFullname, setRemplirChamp,setCodeSent,setcorrectCode ,setauthentificate , login , setclosesuccessmessage , setclosesuccessmessagefromHome , setCallId} = userSlice.actions;
+export const { setEmailError, setIncorrectFullname, setRemplirChamp,setCodeSent,setcorrectCode ,setauthentificate , login , setclosesuccessmessage , setclosesuccessmessagefromHome ,setIsInRoom , setCallId } = userSlice.actions;
 export default userSlice.reducer;

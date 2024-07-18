@@ -6,7 +6,7 @@ import { Room } from "./Room";
 export class User {
     
     @ObjectIdColumn()
-    id!: ObjectId
+    id!: string
 
     @Column()
     fullName!: string
@@ -18,7 +18,7 @@ export class User {
     confirmationCode!: number
 
     @Column({ nullable: true })
-    peerid!: string | null;
+    peerid!: string ;
 
     @Column()
     avatar!: string
@@ -29,7 +29,7 @@ export class User {
     @UpdateDateColumn()
     updatedAt!: Date;
 
-    @ManyToOne(() => Room, (room) => room.participants , ({ nullable: true }) )
+    @ManyToOne(() => Room, (room) => room.participants ) 
     room!: Room;
 
    /* @OneToMany(() => Conversation, conversation => conversation.user , {

@@ -1,0 +1,13 @@
+.videoplayer{
+   width: 100%;
+   height: 100%;
+  /* border:5px solid red ;*/
+  
+}
+
+.videoplayer video {
+    width: 50%;
+    height: 83%;
+    object-fit:cover; /* Ajuster le mode de découpage du vidéo */
+    position: absolute;
+  }

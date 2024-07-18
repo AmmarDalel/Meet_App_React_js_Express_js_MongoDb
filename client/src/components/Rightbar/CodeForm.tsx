@@ -39,16 +39,15 @@ function CodeForm() {
                 dispatch(setauthentificate(true));
                 dispatch(setclosesuccessmessagefromHome(false));
                 console.log('Code correct');
-                navigate(`/ConfirmationCode/:${id}/CorrectCode`) ;
                 const token = data.token;
                 const cookies = new Cookies(null, { path: '/' });
                 cookies.set('user', {token},{maxAge:24 * 60 * 60}); //reste valable 24h
+                navigate(`/ConfirmationCode/:${id}/CorrectCode`) ;
 
                
             } else {
                 dispatch(setcorrectCode(false));
                 dispatch(setauthentificate(true));
-                console.log('hellllo')
                 console.error('Erreur d\'authentification');
                 navigate('/ConfirmationCode/IncorrectCode') ;
             }

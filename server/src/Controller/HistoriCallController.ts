@@ -4,7 +4,7 @@ import { getUserRepository ,getHistoricCallRepository} from '../BdConnection';
 let userRepository = getUserRepository();
 let historicCallRepository=getHistoricCallRepository() ;
 
-export const createHistoricCall = async ( callId:string ) => {
+/*export const createHistoricCall = async ( callId:string ) => {
   console.log('from create historiccall')
 
   // Obtenir les repositories nécessaires
@@ -63,3 +63,4 @@ export const AddUser = async (callId: string, userId: any, PeerId: string) => {
     console.log('Error:', error);
   }
 };
+*/

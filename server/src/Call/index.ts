@@ -1,51 +1,80 @@
 import { Socket } from "socket.io";
 import {v4 as uuidV4} from "uuid" ;
-import {createHistoricCall , AddUser} from '../Controller/HistoriCallController' ;
+import { AddParticipant, CreateRoom } from "../Controller/RoomController";
 
-interface ICallParams{
-    callId :string;
-    userId:string;
-    peerId :string ;
+const rooms:Record<string , string[]>={}
+interface IJoinRoom{
+    roomId :string;
+    peerId:string;
+    email:string ;
 }
-export const callHandler=(socket:Socket)=>{
-    console.log('from callhandler')
+
+interface IRoomParams{
+  roomId :string;
+  peerId:string;
+  
+}
+
+interface ICreateRoom{
+  userId :any ;
+  peerId:string;
+  email:string ;
+
+}
+
+export const callHandler = (socket: Socket) => {
+    
+  console.log('connected');
+
+  const createRoom = ({userId , peerId , email}:ICreateRoom)=> {
+    console.log(userId)
+    const roomId=uuidV4() ;
+    rooms[roomId]=[] ;
+    rooms[roomId].push(peerId) ;
     try{
-        const createCall=()=>{
-            console.log('from createcall')
-            const callId=uuidV4() ;
-            createHistoricCall( callId ) ;
-            socket.emit('call-created',{callId}) ;
-            console.log("user created the call") ;
-        }
-    
-        const joinCall=({callId ,userId , peerId}:ICallParams)=>{
-            
-            socket.join(callId) ;
-            //createHistoricCall(userId, callId , peerId) ;
-            AddUser(callId , userId , peerId)
-            console.log('user joined the call' , callId , peerId) ;
-    
-            socket.on("disconnect",()=>{
-                console.log("user left the call") ;
-                leaveCall({callId , userId , peerId}) ;
-            }) ;
-    
-            const leaveCall=({callId ,userId, peerId}:ICallParams)=>{
-    
-                //supprimer user du call
-    
-                socket.to(callId).emit("user-disconnected" , peerId) ;
-        }
-        
-        socket.on('start-call',createCall) ;
-        socket.on('join-call',joinCall) ;
-    
+
+      CreateRoom(email, peerId , roomId ) ;
+
+    }catch(error){
+      console.log(error)
     }
-    }
-    catch(error){
-        console.log(error)
+    socket.emit('room-create' , {roomId}) ;
+    console.log('user created the room') ;
+    socket.on('disconnect', () => {
+        console.log("user left the room")
+        //leaveRoom({roomId , peerId})
+    ;}) ;
+   }
+
+   const  joinRoom = ({roomId ,  peerId , email}:IJoinRoom)=> {
+    if(rooms[roomId]){
+      rooms[roomId].push(peerId) ;
+      console.log('user joined the room ',roomId , peerId) ;
+      socket.join(roomId) ;
+      AddParticipant(email , peerId, roomId) ;
+      socket.emit('get-users',{
+      roomId ,
+      participants:rooms[roomId] ,
+     }) ;
     }
 
- 
+    socket.on('disconnect', () => {
+      console.log("user left the room")
+      //leaveRoom({roomId , peerId}) ;
+      
+    })
+
+   }
+  
+   /*const leaveRoom=({roomId , peerId}:IRoomParams)=>{
+      rooms[roomId]=rooms[roomId].filter((id)=>id!==peerId) ;
+      socket.to(roomId).emit("user-disconnected" , peerId) ;
+  
+   }
+  */
+
+  socket.on('create-room', createRoom);
+  socket.on('join-room',joinRoom );
 }
+
 
