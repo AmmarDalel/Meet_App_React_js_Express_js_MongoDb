@@ -1,6 +1,6 @@
-import { EmptyRoomContainer } from './components/Room/RoomContainer'
-import RightSidebar from './components/Rightbar/Sidebar'
-import ErrorMessage from './components/Rightbar/ErrorMessage'
+import { EmptyRoomContainer } from '../components/Room/RoomContainer'
+import RightSidebar from '../components/Rightbar/Sidebar'
+import ErrorMessage from '../components/Rightbar/ErrorMessage'
 
 function IncorrectCode() {
   return (

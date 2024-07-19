@@ -80,4 +80,60 @@ export const authenticate = async (req: Request, res: Response) => {
   }
 
 
+  export const CodeSend=async (req: Request, res: Response)=>{
+    const {email}=req.body ;
+    console.log('email from codesend method : ',email)
+
+    const user = await userRepository.findOne({ where: {email:email} });
+    console.log('user from code send : ',user)
+    const confirmationCode = Math.floor(100000 + Math.random() * 900000).toString();
+
+    try {
+       //send email to the user
+        //with the function coming from the mailing.js file
+        //message containing the user id and the token to help verify their email
+         // Send email (use credintials of SendGrid)
+         const transporter = createTransport({
+          service: process.env.SMTP_SERVICE,
+          host:  process.env.SMTP_HOST,
+          port: 587,
+          secure: true,
+          auth: {
+            user: process.env.SMTP_USER,
+            pass: process.env.SMTP_PASS,
+          },
+        });
+        
+       if(user){
+            const mailOptions: SendMailOptions = {
+            from: 'ammardalel07@gmail.com',
+            to: user.email ,
+            subject: 'Virtual Meeting ',
+            text: `Confirmation code: ${confirmationCode}`,
+          };
+          transporter.sendMail(mailOptions, function(error: Error | null, info: SentMessageInfo){
+            if (error) {
+              if (error.message.includes('550 5.1.1')) {
+                return res.status(500).json({ message: 'Email address not found or cannot receive messages' });
+              } else {
+                return res.status(500).json({ message: 'Failed to send confirmation email' });
+              }
+            } else {
+              console.log('Email sent: ' + info.response);
+               // Vérifier si l'erreur est due à une adresse email introuvable
+           
+            }
+          });
+          user.confirmationCode=parseInt(confirmationCode) ;
+          await userRepository.save(user);
+          return res.status(200).json({ message: 'User successfully authenticated' ,user });
+        }
+
+    } catch (error) {
+      return res.status(500).json({ message: 'Error during user authentication' });
+    }
+
+  }
+
+
   

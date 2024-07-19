@@ -15,6 +15,7 @@ interface UserState {
     closesuccessmessagefromHome:boolean ;
     callId :string ;
     isInRoom:boolean ;
+    //isAuthentificate:boolean ;
 
   }
   
@@ -32,6 +33,7 @@ interface UserState {
     closesuccessmessagefromHome :true ,
     callId:'' ,
     isInRoom:false ,
+   // isAuthentificate:false ,
   };
 
 const userSlice = createSlice({
@@ -75,7 +77,6 @@ const userSlice = createSlice({
       state.isInRoom = action.payload;
   },
 
-   
   },
 
 });

@@ -1,6 +1,6 @@
-import EmptyRoomContainer from './components/Room/EmptyRoomContainer'
-import RightSidebar from './components/Rightbar/Sidebar'
-import CodeForm from './components/Rightbar/CodeForm'
+import EmptyRoomContainer from '../components/Room/EmptyRoomContainer'
+import RightSidebar from '../components/Rightbar/Sidebar'
+import CodeForm from '../components/Rightbar/CodeForm'
 
 function ConfirmationCode() {
   return (

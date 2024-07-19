@@ -7,6 +7,8 @@ import cookieParser from 'cookie-parser';
 import authRoutes from "./Router/authRoutes";
 import verifyCodeRoutes from './Router/verifyConfirmationCode';
 import userRoutes from './Router/UserRouter';
+import CodeSendRoutes from './Router/CodeSendRoutes';
+
 import "reflect-metadata";
 import Session from "express-session";
 import { callHandler } from "./Call";
@@ -63,6 +65,8 @@ app.use(cookieParser());
 app.use('/api/users/authent', authRoutes);
 app.use('/api/users/verifycode', verifyCodeRoutes);
 app.use('/api/users/verifyuser', userRoutes);
+app.use('/api/users/codesend', CodeSendRoutes);
+
 
 app.use(Session({
   secret: 'votre_secret',

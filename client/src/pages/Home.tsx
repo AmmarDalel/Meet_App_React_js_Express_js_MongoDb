@@ -1,11 +1,11 @@
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import {EmptyRoomContainer} from './components/Room/RoomContainer';
+import {EmptyRoomContainer} from '../components/Room/RoomContainer';
 
 import Cookies from 'universal-cookie';
 import { useDispatch } from 'react-redux';
-import { AppDispatch } from './Redux/Store';
-import { setauthentificate, setclosesuccessmessage, setclosesuccessmessagefromHome, setCodeSent, setcorrectCode } from './Redux/features/user';
+import { AppDispatch } from '../Redux/Store';
+import { setauthentificate, setclosesuccessmessage, setclosesuccessmessagefromHome, setCodeSent, setcorrectCode } from '../Redux/features/user';
 import { jwtDecode } from 'jwt-decode';
 import StartCall from './StartCall';
 
@@ -15,7 +15,7 @@ function Home() {
     const usertoken=cookies.get('user') ;
     const navigate = useNavigate();
 
-    useEffect(() => {
+   /* useEffect(() => {
         try{
             const userAccount = cookies.get('user');
 
@@ -35,7 +35,7 @@ function Home() {
                             dispatch(setcorrectCode(true));
                             dispatch(setauthentificate(true));
                             dispatch(setclosesuccessmessagefromHome(true));
-                            navigate(`/${userid}/StartCall/`) ;
+                           // navigate(`/${userid}/StartCall/`) ;
 
 
                     } else {
@@ -43,14 +43,14 @@ function Home() {
                         dispatch(setcorrectCode(false));
                         dispatch(setclosesuccessmessage(false));
                         dispatch(setauthentificate(false));
-                        navigate('/authentificate');
+                       // navigate('/authentificate');
                     }
                 }catch(error){
                     dispatch(setCodeSent(false));
                     dispatch(setcorrectCode(false));
                     dispatch(setclosesuccessmessage(false));
                     dispatch(setauthentificate(false));
-                    navigate('/authentificate');
+                   // navigate('/authentificate');
                 }
 
             }
@@ -63,7 +63,7 @@ function Home() {
         }
        
     }, [cookies , navigate]);
-
+*/
  
     return (
         <>

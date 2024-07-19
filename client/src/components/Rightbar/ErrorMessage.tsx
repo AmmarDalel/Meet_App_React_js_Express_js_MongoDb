@@ -2,23 +2,49 @@ import './SuccessMessage.css'
 import './Form.css';
 import { Button } from '@mui/material';
 import ErrorIcon from '@mui/icons-material/Error';
-import { useDispatch } from 'react-redux';
-import { AppDispatch } from '../../Redux/Store';
+import { useDispatch, useSelector } from 'react-redux';
+import { AppDispatch, RootState } from '../../Redux/Store';
 import { setCodeSent , setauthentificate} from '../../Redux/features/user';
+import { useNavigate } from 'react-router-dom';
 
 
 function ErrorMessage() {
     const dispatch = useDispatch<AppDispatch>();
+    const navigate = useNavigate();
+    const email = useSelector((state: RootState) => state.user.email);
 
-    const ReSentCode=()=>{
-        dispatch(setCodeSent(true));
-        dispatch(setauthentificate(false));
-        console.log('try again')
+    const ReSentCode=async()=>{
+      
+        try {
+          dispatch(setauthentificate(false));
+         // console.log('try again') ;
+          // Appel API pour authentification
+          const response = await fetch('http://localhost:5000/api/users/codesend/hello', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
+            body: JSON.stringify({ email }),
+          });
+  
+          //const data = await response.json();
+  
+          if (response.ok) {
+            console.log('ok')
+            dispatch(setauthentificate(true)) ;
+            navigate('/ConfirmationCode');
+
+        } else {
+            const errorData = await response.json();
+            console.error('Error sending code:', errorData);
+        }
+         
+        }catch(error){
+          console.log('hello')
+          console.log(error) ;
+        }
     }
 
     const TryAgain=()=>{
-        dispatch(setCodeSent(false));
-        dispatch(setauthentificate(false));
+        navigate('/authentificate')
 
     }
 

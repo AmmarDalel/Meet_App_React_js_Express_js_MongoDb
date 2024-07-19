@@ -1,7 +1,7 @@
 import React from 'react'
-import { EmptyRoomContainer } from './components/Room/RoomContainer'
-import RightSidebar from './components/Rightbar/Sidebar'
-import SuccessMessage from './components/Rightbar/SuccessMessage'
+import { EmptyRoomContainer } from '../components/Room/RoomContainer'
+import RightSidebar from '../components/Rightbar/Sidebar'
+import SuccessMessage from '../components/Rightbar/SuccessMessage'
 
 function CorrectCode() {
   return (

@@ -1,6 +1,6 @@
-import { EmptyRoomContainer } from './components/Room/RoomContainer'
-import RightSidebar from './components/Rightbar/Sidebar'
-import StartCallPanel from './components/Rightbar/StartCallPanel'
+import { EmptyRoomContainer } from '../components/Room/RoomContainer'
+import RightSidebar from '../components/Rightbar/Sidebar'
+import StartCallPanel from '../components/Rightbar/StartCallPanel'
 
 function StartCall() {
   return (

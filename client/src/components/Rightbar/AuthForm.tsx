@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { login, setclosesuccessmessagefromHome, setCodeSent, setEmailError, setIncorrectFullname, setRemplirChamp } from '../../Redux/features/user';
+import { login, setauthentificate, setclosesuccessmessagefromHome, setCodeSent, setEmailError, setIncorrectFullname, setRemplirChamp } from '../../Redux/features/user';
 import InputComponent from './Input'; // Assurez-vous que le chemin vers InputComponent est correct
 import type { AppDispatch, RootState } from '../../Redux/Store';
 import { useNavigate } from 'react-router-dom';
@@ -15,7 +15,7 @@ function AuthForm() {
   const incorrectFullname = useSelector((state: RootState) => state.user.incorrectFullname);
   const remplirChamp = useSelector((state: RootState) => state.user.remplirChamp);
 
-  const [id,setId]=useState('') ;
+ // const [id,setId]=useState('') ;
   const [email, setEmail] = useState('');
   const [fullname, setFullname] = useState('');
 
@@ -49,15 +49,17 @@ function AuthForm() {
         }
 
         if (response.ok) {
-          dispatch(setIncorrectFullname(false));
+          //dispatch(setIncorrectFullname(false));
           dispatch(login({ id : data.user ,fullname: fullname, email: email }));
-          dispatch(setCodeSent(true));
-          dispatch(setclosesuccessmessagefromHome(false));
+          //dispatch(setCodeSent(true));
+          //dispatch(setclosesuccessmessagefromHome(false));
+          dispatch(setauthentificate(true)) ;
           navigate('/ConfirmationCode');
 
         } else {
           // Gérer les erreurs d'authentification
           console.error("Erreur d'authentification");
+          return
         }
       } catch (error) {
         console.error(error);
