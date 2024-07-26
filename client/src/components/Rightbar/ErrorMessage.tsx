@@ -4,7 +4,7 @@ import { Button } from '@mui/material';
 import ErrorIcon from '@mui/icons-material/Error';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../../Redux/Store';
-import { setCodeSent , setauthentificate} from '../../Redux/features/user';
+import {  setauthentificate} from '../../Redux/features/user';
 import { useNavigate } from 'react-router-dom';
 
 
@@ -17,8 +17,6 @@ function ErrorMessage() {
       
         try {
           dispatch(setauthentificate(false));
-         // console.log('try again') ;
-          // Appel API pour authentification
           const response = await fetch('http://localhost:5000/api/users/codesend/hello', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
@@ -28,7 +26,6 @@ function ErrorMessage() {
           //const data = await response.json();
   
           if (response.ok) {
-            console.log('ok')
             dispatch(setauthentificate(true)) ;
             navigate('/ConfirmationCode');
 
@@ -38,7 +35,6 @@ function ErrorMessage() {
         }
          
         }catch(error){
-          console.log('hello')
           console.log(error) ;
         }
     }

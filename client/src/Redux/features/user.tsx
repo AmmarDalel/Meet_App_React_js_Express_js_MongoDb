@@ -12,10 +12,9 @@ interface UserState {
     correctCode:boolean ;
     authentificate:boolean;
     closesuccessmessage:boolean;
-    closesuccessmessagefromHome:boolean ;
     callId :string ;
     isInRoom:boolean ;
-    //isAuthentificate:boolean ;
+    leavecall:boolean ;
 
   }
   
@@ -30,10 +29,9 @@ interface UserState {
     correctCode:false ,
     authentificate:false,
     closesuccessmessage:false,
-    closesuccessmessagefromHome :true ,
     callId:'' ,
     isInRoom:false ,
-   // isAuthentificate:false ,
+   leavecall:false ,
   };
 
 const userSlice = createSlice({
@@ -61,9 +59,7 @@ const userSlice = createSlice({
     setclosesuccessmessage:(state, action: PayloadAction<boolean>) => {
       state.closesuccessmessage = action.payload;
   },
-  setclosesuccessmessagefromHome:(state, action: PayloadAction<boolean>) => {
-    state.closesuccessmessagefromHome = action.payload;
-},
+
   login: (state, action: PayloadAction<{ id:string ;fullname: string; email: string }>) => {
         state.id=action.payload.id ;
         state.fullname = action.payload.fullname;
@@ -76,10 +72,13 @@ const userSlice = createSlice({
     setIsInRoom: (state, action: PayloadAction<boolean>) => {
       state.isInRoom = action.payload;
   },
+  setLeavecall: (state, action: PayloadAction<boolean>) => {
+    state.leavecall = action.payload;
+},
 
   },
 
 });
 
-export const { setEmailError, setIncorrectFullname, setRemplirChamp,setCodeSent,setcorrectCode ,setauthentificate , login , setclosesuccessmessage , setclosesuccessmessagefromHome ,setIsInRoom , setCallId } = userSlice.actions;
+export const { setEmailError, setIncorrectFullname, setRemplirChamp,setCodeSent,setcorrectCode ,setauthentificate , login , setclosesuccessmessage  ,setIsInRoom , setCallId  , setLeavecall} = userSlice.actions;
 export default userSlice.reducer;

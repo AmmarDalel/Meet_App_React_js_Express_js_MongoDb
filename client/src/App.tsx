@@ -2,20 +2,16 @@ import './App.css'
 import { Provider } from 'react-redux';
 import { store } from './Redux/Store';
 import { CookiesProvider } from 'react-cookie';
-
 import {   Routes, Route } from 'react-router-dom';
-
-
 import ConfirmationCode from './pages/ConfirmationCode';
 import CorrectCode from './pages/CorrectCode';
 import IncorrectCode from './pages/IncorrectCode';
 import StartCall from './pages/StartCall';
-import Room from './pages/Room';
-import Protected from './routes/protected';
+import Protected from './routes/protected' ;
 import Home from './pages/Home';
 import Authentificate from './pages/Authentificate';
 import Call from './pages/Call';
-
+import LeaveCall from './pages/LeaveCall';
 function App() {
   return (
     <CookiesProvider defaultSetOptions={{ path: '/' }}>
@@ -24,17 +20,18 @@ function App() {
             <Route path="/" element={<Protected />}>
               <Route index element={<Home />} />
               <Route path="/call/:id" element={<Call />} />
-              <Route path="/call/:callId" element={<Room />} />
+              <Route path="/StartCall/:userid/" element={<StartCall />} />
+
+              {/*<Route path="/call/:callId" element={<Room />} />*/}
 
               {/* All other routes that you want to protect will go inside here */}
             </Route>
-            <Route path="/StartCall/:userid/" element={<StartCall />} />
-
             <Route path="/ConfirmationCode/:userid/CorrectCode" element={<CorrectCode />} />
             <Route path="/authentificate" element={<Authentificate />} />
             <Route path="/ConfirmationCode" element={<ConfirmationCode />} />
             <Route path="/ConfirmationCode/IncorrectCode" element={<IncorrectCode />} />
-             
+            <Route path="/leavecall" element={<Authentificate />} />
+
           </Routes>
       </Provider>
     </CookiesProvider>

@@ -8,10 +8,9 @@ import authRoutes from "./Router/authRoutes";
 import verifyCodeRoutes from './Router/verifyConfirmationCode';
 import userRoutes from './Router/UserRouter';
 import CodeSendRoutes from './Router/CodeSendRoutes';
-
 import "reflect-metadata";
 import Session from "express-session";
-import { callHandler } from "./Call";
+import { RoomHandler } from "./Room";
 import { videoCallController } from "./Controller/videoCallController";
 import { v4 as uuidv4 } from "uuid"; // Assurez-vous d'importer correctement uuid
 
@@ -32,16 +31,6 @@ const io = new Server(server, {
 const rooms = new Map<string, Set<string>>();
 
 
-// Gérer les événements de connexion
-/*io.on("connection", (socket) => {
-  console.log('user is connected');
-  callHandler(socket) ;
-  socket.on('disconnect', () => {
-    console.log('user disconnected');
-  });
-});
-*/
-
  // Video Call Controller
  videoCallController(io);
 // Charger les variables d'environnement
@@ -49,7 +38,7 @@ dotenv.config();
 
 // Configurer les middlewares
 const corsOptions = {
-  origin: 'http://localhost:5173', // Remplacez par l'URL de votre front-end
+  origin: '*', // Remplacez par l'URL de votre front-end
   methods: ['GET', 'POST'], // Méthodes HTTP autorisées
   allowedHeaders:['Access-Control-Allow-Headers', 'Access-Control-Allow-Origin', 'Content-Type',] ,
   /*Le serveur doit répondre à cette requête OPTIONS avec les en-têtes CORS appropriés 
@@ -88,43 +77,7 @@ app.use(Session({
 
 io.on('connection', (socket: Socket) => {
   console.log(`User connected: ${socket.id}`);
-  callHandler(socket) ;
-  // Rejoindre une salle
- /* socket.on('join-room', (roomId: string, userId: string) => {
-    // Ajouter l'utilisateur à la salle
-    if (!rooms.has(roomId)) {
-      rooms.set(roomId, new Set());
-    }
-    const users = rooms.get(roomId);
-    if (users) {
-      users.add(userId);
-      socket.join(roomId);
-      console.log(`User ${userId} joined room ${roomId}`);
-
-      // Informer les autres utilisateurs dans la salle
-      socket.to(roomId).emit('user-connected', userId);
-    }
-  });
-
-  // Gérer la signalisation
-  socket.on('signal', (data: { roomId: string; userId: string; signal: any }) => {
-    socket.to(data.roomId).emit('signal', { userId: data.userId, signal: data.signal });
-  });
-
-  // Déconnexion de la salle
-  socket.on('disconnect', () => {
-    console.log(`User disconnected: ${socket.id}`);
-    rooms.forEach((users, roomId) => {
-      if (users.has(socket.id)) {
-        users.delete(socket.id);
-        if (users.size === 0) {
-          rooms.delete(roomId);
-        } else {
-          socket.to(roomId).emit('user-disconnected', socket.id);
-        }
-      }
-    });
-  });*/
+  RoomHandler(socket) ;
 });
 // Démarrer le serveur
 server.listen(port, () => console.log(`Server is running on port ${port}`));

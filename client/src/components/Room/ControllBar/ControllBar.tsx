@@ -1,4 +1,3 @@
-import React from 'react'
 import './ControllBar.css'
 import KeyboardVoiceIcon from '@mui/icons-material/KeyboardVoice';
 import VideocamIcon from '@mui/icons-material/Videocam';
@@ -9,7 +8,32 @@ import PanToolIcon from '@mui/icons-material/PanTool';
 import InsertEmoticonIcon from '@mui/icons-material/InsertEmoticon';
 import { Button } from '@mui/material';
 import InputSlider from './InputSlider';
+import { useDispatch, useSelector } from 'react-redux';
+import { AppDispatch, RootState } from '../../../Redux/Store';
+import { setLeavecall } from '../../../Redux/features/user';
+import { useNavigate } from 'react-router-dom';
+import { useContext, useEffect } from 'react';
+import { removePeerAction } from '../../../Context/peerActions';
+import { CallContext } from '../../../Context/CallContext';
+
 function ControllBar() {
+  const dispatch = useDispatch<AppDispatch>();
+  const { ws} = useContext(CallContext);
+
+  const leavecall = useSelector((state: RootState) => state.user.leavecall);
+  const navigate=useNavigate() ;
+
+  const removePeer=(peerId:string)=>{
+    dispatch(removePeerAction(peerId)) ;
+  }
+
+  const leaveCall=()=>{
+    console.log('leavecall ' , leavecall) ;
+    dispatch(setLeavecall(true)) ;
+ 
+
+    console.log('------------------- the user leaved the call') ;
+  }
   return (
     <footer className='ControllBarContainer'>
         <div className='soncontainer'>
@@ -71,7 +95,8 @@ function ControllBar() {
           color:'white',
           border:'none'
 
-        }}>Leave Meeting</Button>
+        }} onClick={leaveCall}
+        >Leave Meeting</Button>
         </div>
     </footer>
   )

@@ -10,11 +10,11 @@ import { RootState } from '../../Redux/Store';
 
 
 function SuccessMessage() {
- const userId = useSelector((state: RootState) => state.user.id.id);
+ const userId = useSelector((state: RootState) => state.user.id);
   const navigate = useNavigate();
 
   const close=()=>{
-   navigate(`/StartCall/${userId}`)
+   navigate(`/StartCall/${userId}`) ;
   }
 
 

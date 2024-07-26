@@ -1,9 +1,8 @@
-import React, { useState } from 'react';
+import  { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import type { AppDispatch, RootState } from '../../Redux/Store';
-import { setauthentificate, setclosesuccessmessage, setclosesuccessmessagefromHome, setcorrectCode } from '../../Redux/features/user';
+import { setauthentificate, setcorrectCode } from '../../Redux/features/user';
 import Cookies from 'universal-cookie';
-import { jwtDecode } from "jwt-decode";
 import { useNavigate } from 'react-router-dom';
 
 function CodeForm() {
@@ -37,7 +36,7 @@ function CodeForm() {
                 const data = await response.json();
                 dispatch(setcorrectCode(true));
                 dispatch(setauthentificate(true));
-                dispatch(setclosesuccessmessagefromHome(false));
+                //dispatch(setclosesuccessmessagefromHome(false));
                 console.log('Code correct');
                 const token = data.token;
                 const cookies = new Cookies(null, { path: '/' });

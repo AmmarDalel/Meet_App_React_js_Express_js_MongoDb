@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { login, setauthentificate, setclosesuccessmessagefromHome, setCodeSent, setEmailError, setIncorrectFullname, setRemplirChamp } from '../../Redux/features/user';
+import { login, setauthentificate,  setEmailError, setIncorrectFullname, setRemplirChamp } from '../../Redux/features/user';
 import InputComponent from './Input'; // Assurez-vous que le chemin vers InputComponent est correct
 import type { AppDispatch, RootState } from '../../Redux/Store';
 import { useNavigate } from 'react-router-dom';

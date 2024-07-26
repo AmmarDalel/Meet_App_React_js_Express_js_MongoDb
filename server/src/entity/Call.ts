@@ -11,8 +11,8 @@ export class Call {
   @CreateDateColumn()
   createdAt!: Date;
 
-  @Column()
-  endTime!: Date;
+  @Column({ type: 'timestamp', nullable: true }) // Permet la valeur NULL dans la base de données
+  endTime?: Date; // endTime peut être de type Date ou undefined
 
   @Column()
   duration!: number;

@@ -1,5 +1,4 @@
 import { Room } from "../entity/Room";
-import { User } from "../entity/User";
 import { getRoomRepository, getUserRepository , getHistoricCallRepository } from "../BdConnection";
 import { createConversation } from "./ConversationController";
 import { Call } from "../entity/Call";
@@ -24,21 +23,19 @@ export const CreateRoom = async (email: string, peerId: string, roomId: string) 
         room.createdBy = updatedcreatedby;
         room.participants=[] ;
         room.participants.push(createdby.id) ;
-        console.log('participants : ', room.participants) ;
         
         //conversation creation 
         room.conversation = String(createConversation()) ;
        
         const call=new Call() ;
         call.callType='video' ;
+        call.endTime=undefined ;
         const savedcall= await callRepository.save(call) ;
 
         room.call =savedcall.id ;
 
         await roomRepository.save(room);
-        console.log('Room created in the database');
     } catch (error) {
-        console.log('Room not created in the database');
         console.log(error);
     }
 }
@@ -57,19 +54,49 @@ export const AddParticipant = async (email: string, peerId: string, roomId: stri
     if (!room) {
       throw new Error(`Room with id ${roomId} not found`);
     }
-
-    console.log('participants :', room.participants)
-
     // Ajouter le participant à la salle
-    //room.participants = room.participants ? [...room.participants, participant] : [participant];
     console.log(room.participants) ;
     room.participants.push(participant.id) ;
     console.log(room.participants) ;
     // Sauvegarder les modifications de la salle
     await roomRepository.update(room.id, { participants: room.participants });
 
-    console.log('Participant added successfully');
   } catch (error) {
     console.error('Error adding participant:', error);
   }
 };
+
+export const LeaveParticipant = async ( peerId: string, roomId: string) => {
+  try{
+    const participant = await userRepository.findOne({ where: {peerid: peerId } });
+    const room = await roomRepository.findOne({ where: {roomId:roomId } });
+
+    if(participant && room){
+      participant.peerid='' ;
+      participant.room=new Room() ;
+      //supprimer le participant qui a quitter le room
+      const updatedParticipants = room.participants.filter(p => String(p) !== String(participant.id));
+
+      // ajouter l'heure de fin du Call
+      if(updatedParticipants.length==0){
+       const id=room.call ;
+        const call = await callRepository.findOneById(id);
+        if(call) {
+          call.endTime=new Date() ;
+          await callRepository.save(call) ;
+        }
+
+      }
+      //mise à jour du tableau des participants 
+      room.participants=updatedParticipants ;
+      await roomRepository.save(room) ;
+      await userRepository.save(participant)
+  
+    }
+
+
+  }
+  catch(error){
+    console.log(error) ;
+  }
+}

@@ -7,22 +7,21 @@ import { AppDispatch } from '../Redux/Store'
 import { setCallId } from '../Redux/features/user'
 import Cookies from 'universal-cookie';
 import {jwtDecode} from 'jwt-decode'
+import SessionId from '../components/Rightbar/SessionId'
 function Call() {
-    const {id}=useParams() ;
+    const {id}=useParams<string>() ;
     const dispatch = useDispatch<AppDispatch>();
     const cookies = new Cookies();
     const usertoken = cookies.get('user');
     const userdata = jwtDecode(usertoken.token); 
     dispatch(setCallId(String(id)));
-
-
     
   return (
     <div className='appcontainer'> 
         <RoomContainer/>
         <RightSidebar > 
-         <></>
-          </RightSidebar>             
+          {id?<SessionId roomId={id}/> :<></>}
+        </RightSidebar>             
     </div>
   )
 }

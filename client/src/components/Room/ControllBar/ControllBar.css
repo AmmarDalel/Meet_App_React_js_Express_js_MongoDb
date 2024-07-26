@@ -1,7 +1,11 @@
 .ControllBarContainer{
+    z-index: 999;
+    position:end;
     width: 100%;
     height: 100px;
     background-color: #17202e;
+    margin-top: auto;
+    margin-bottom: -10px;
     border: 1px solid #26303f;
     display: flex;
     column-gap: 20px;

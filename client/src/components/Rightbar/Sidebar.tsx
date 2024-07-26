@@ -1,7 +1,5 @@
-import React from 'react';
 import './Sidebar.css';
 import TabHeader from './TabHeader';
-//import Form from './Form';
 import './Form.css' ;
 
 function RightSidebar({children}:{children:any}) {
@@ -20,7 +18,6 @@ function RightSidebar({children}:{children:any}) {
            </header>
 
            {children}
-      {/*<Form/>*/}
     </div>
   )
 }
