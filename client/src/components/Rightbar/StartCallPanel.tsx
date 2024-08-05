@@ -6,12 +6,16 @@ import { CallContext } from '../../Context/CallContext';
 import { useNavigate } from 'react-router-dom';
 import Cookies from 'universal-cookie';
 import { jwtDecode } from 'jwt-decode';
+import { useDispatch } from 'react-redux';
+import { AppDispatch } from '../../Redux/Store';
+import { setCallId } from '../../Redux/features/user';
 
 function StartCallPanel() {
   const navigate=useNavigate() ;
     const [targetid, setTargetid] = useState('');
    // const userId=useSelector((state:RootState)=>state.user.id);
-   
+   const dispatch = useDispatch<AppDispatch>();
+
     const { ws  , me} = useContext(CallContext);
     const cookies = new Cookies();
     var usertoken=null ;
@@ -33,8 +37,9 @@ function StartCallPanel() {
       const createRoom = async () => {
         console.log('user id to create room : ',userId , email)
         ws.emit('create-room' , { userId : userId ,peerId:me._id ,email :email}) ;
-        ws.on('room-created', ( {roomId} ) => {
+        ws.on('room-created', ( {roomId}) => {
           console.log('Room created with ID:', roomId);
+          dispatch(setCallId(roomId)) ;
           navigate(`/call/${roomId}`) ;
         });
 

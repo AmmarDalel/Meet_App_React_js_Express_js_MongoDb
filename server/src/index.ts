@@ -8,6 +8,7 @@ import authRoutes from "./Router/authRoutes";
 import verifyCodeRoutes from './Router/verifyConfirmationCode';
 import userRoutes from './Router/UserRouter';
 import CodeSendRoutes from './Router/CodeSendRoutes';
+import roomRouter from './Router/RoomRoutes' ;
 import "reflect-metadata";
 import Session from "express-session";
 import { RoomHandler } from "./Room";
@@ -55,6 +56,7 @@ app.use('/api/users/authent', authRoutes);
 app.use('/api/users/verifycode', verifyCodeRoutes);
 app.use('/api/users/verifyuser', userRoutes);
 app.use('/api/users/codesend', CodeSendRoutes);
+app.use('/api/room/participants' ,roomRouter ) ;
 
 
 app.use(Session({

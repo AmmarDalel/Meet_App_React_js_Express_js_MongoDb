@@ -1,5 +1,6 @@
 // features/userSlice.ts
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import Peer from 'peerjs';
 
 interface UserState {
     emailError: string;
@@ -15,7 +16,8 @@ interface UserState {
     callId :string ;
     isInRoom:boolean ;
     leavecall:boolean ;
-
+    me: Peer | undefined;
+    participants : string[] ;
   }
   
   const initialState: UserState = {
@@ -32,6 +34,8 @@ interface UserState {
     callId:'' ,
     isInRoom:false ,
    leavecall:false ,
+   me :undefined ,
+   participants:[] ,
   };
 
 const userSlice = createSlice({
@@ -75,10 +79,16 @@ const userSlice = createSlice({
   setLeavecall: (state, action: PayloadAction<boolean>) => {
     state.leavecall = action.payload;
 },
+setME: (state, action: PayloadAction<Peer>) => {
+  state.me = action.payload;
+},
+setparticipants: (state, action: PayloadAction<string[]>) => {
+  state.participants = action.payload;
+},
 
   },
 
 });
 
-export const { setEmailError, setIncorrectFullname, setRemplirChamp,setCodeSent,setcorrectCode ,setauthentificate , login , setclosesuccessmessage  ,setIsInRoom , setCallId  , setLeavecall} = userSlice.actions;
+export const { setEmailError, setIncorrectFullname, setRemplirChamp,setCodeSent,setcorrectCode ,setauthentificate , login , setclosesuccessmessage  ,setIsInRoom , setCallId  , setLeavecall , setME , setparticipants} = userSlice.actions;
 export default userSlice.reducer;

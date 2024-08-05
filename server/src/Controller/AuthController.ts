@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import { getUserRepository } from "../BdConnection";
 import { User } from '../entity/User';
 import { SendMailOptions, SentMessageInfo, createTransport } from 'nodemailer';
+import { v4 as uuidv4 } from 'uuid'; 
 
 let userRepository = getUserRepository();
 export const authenticate = async (req: Request, res: Response) => {  
@@ -25,6 +26,7 @@ export const authenticate = async (req: Request, res: Response) => {
 
     else if (!user) {
         user = new User();
+       // user.id = uuidv4(); // Génère un identifiant unique
         user.email = email;
         user.fullName = fullName;
         await userRepository.save(user);

@@ -15,25 +15,31 @@ import { useNavigate } from 'react-router-dom';
 import { useContext, useEffect } from 'react';
 import { removePeerAction } from '../../../Context/peerActions';
 import { CallContext } from '../../../Context/CallContext';
+import { SocketContext } from '../../../Context/SocketIo';
 
 function ControllBar() {
   const dispatch = useDispatch<AppDispatch>();
-  const { ws} = useContext(CallContext);
+  const { stream , peers, me , leaveCall} = useContext(SocketContext);
+  const {ws} = useContext(CallContext);
 
+  const { timeElapsed } = useContext(SocketContext);
+  
   const leavecall = useSelector((state: RootState) => state.user.leavecall);
-  const navigate=useNavigate() ;
+  const roomId = useSelector((state: RootState) => state.user.callId);
+  const navigate = useNavigate();
 
-  const removePeer=(peerId:string)=>{
-    dispatch(removePeerAction(peerId)) ;
-  }
+  const removePeer = (peerId: string) => {
+    dispatch(removePeerAction(peerId));
+  };
 
-  const leaveCall=()=>{
-    console.log('leavecall ' , leavecall) ;
-    dispatch(setLeavecall(true)) ;
- 
+  /*const leaveCall = () => {
+    console.log('leavecall ', leavecall);
+    dispatch(setLeavecall(true));
+    console.log('------------------- the user leaved the call');
+    //navigate('/leavecall') ;
+  };*/
 
-    console.log('------------------- the user leaved the call') ;
-  }
+
   return (
     <footer className='ControllBarContainer'>
         <div className='soncontainer'>

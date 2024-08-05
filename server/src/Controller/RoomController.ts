@@ -2,6 +2,10 @@ import { Room } from "../entity/Room";
 import { getRoomRepository, getUserRepository , getHistoricCallRepository } from "../BdConnection";
 import { createConversation } from "./ConversationController";
 import { Call } from "../entity/Call";
+import { Request, Response } from "express";
+import internal from "stream";
+import { ObjectId } from "typeorm";
+import e from "cors";
 
 
 const roomRepository = getRoomRepository(); 
@@ -22,7 +26,9 @@ export const CreateRoom = async (email: string, peerId: string, roomId: string) 
         room.type = 'p2p';
         room.createdBy = updatedcreatedby;
         room.participants=[] ;
+        room.participantsInTheRoom=[] ;
         room.participants.push(createdby.id) ;
+        room.participantsInTheRoom.push(createdby.id) ;
         
         //conversation creation 
         room.conversation = String(createConversation()) ;
@@ -56,6 +62,7 @@ export const AddParticipant = async (email: string, peerId: string, roomId: stri
     }
     // Ajouter le participant à la salle
     console.log(room.participants) ;
+    room.participantsInTheRoom.push(participant.id) ;
     room.participants.push(participant.id) ;
     console.log(room.participants) ;
     // Sauvegarder les modifications de la salle
@@ -66,37 +73,84 @@ export const AddParticipant = async (email: string, peerId: string, roomId: stri
   }
 };
 
-export const LeaveParticipant = async ( peerId: string, roomId: string) => {
+export const LeaveParticipant = async ( peerId: string, roomId: string , duration:string) => {
   try{
     const participant = await userRepository.findOne({ where: {peerid: peerId } });
     const room = await roomRepository.findOne({ where: {roomId:roomId } });
 
     if(participant && room){
-      participant.peerid='' ;
-      participant.room=new Room() ;
-      //supprimer le participant qui a quitter le room
-      const updatedParticipants = room.participants.filter(p => String(p) !== String(participant.id));
 
-      // ajouter l'heure de fin du Call
-      if(updatedParticipants.length==0){
-       const id=room.call ;
-        const call = await callRepository.findOneById(id);
-        if(call) {
-          call.endTime=new Date() ;
-          await callRepository.save(call) ;
-        }
+      const updatedParticipants = room.participantsInTheRoom.filter(participantroom => participantroom !== participant.id);
+      console.log(participant) ;
+     
+     if(!room.duration) room.duration=[] ;
+     const currentDate=new Date() ;
+     const currentTime=currentDate.getTime() ;
+     console.log('currentDate : ', currentDate) ;
+     console.log('currentTime : ',currentTime) ;
+     console.log(duration)
+     console.log('duration : ' , parseInt(duration) )
+     const test =currentDate.getTime() - parseInt(duration) ;
+     console.log('test : ', test)
+     const startTime = new Date(test);
+     console.log('start time : ',startTime)
 
-      }
-      //mise à jour du tableau des participants 
-      room.participants=updatedParticipants ;
-      await roomRepository.save(room) ;
-      await userRepository.save(participant)
+     //room.duration.push(`the participant ${participant.id} enter the room on [time of join] and left after ${duration} mn`)
+    
   
-    }
+    
 
 
-  }
+    }}
   catch(error){
     console.log(error) ;
   }
+} ;
+
+interface IntParticipant {
+  name: string;
 }
+
+export const getParticipantsInRoom = async (req: Request, res: Response) => {
+  try {
+    const { roomId } = req.body;
+    
+    if (!roomId) {
+      return res.status(400).json({ error: "roomId is required" });
+    }
+
+    const room = await roomRepository.findOne({ where: { roomId: roomId } });
+
+    if (room) {
+      console.log('room ---------------- participants : ',room.participantsInTheRoom)
+      // Création d'un tableau pour stocker les participants
+      const participants: IntParticipant[] = [];
+
+      const participantPromises = room.participantsInTheRoom.map(async (element: String) => {
+        console.log('element : ',String(element))
+        const p = await userRepository.findOneById(String(element))
+          console.log('p : ',p)    
+        if (p) {
+          // Création d'un objet IntParticipant avec les données nécessaires
+          const part: IntParticipant = { name: p.fullName }; // Ajustez la clé pour correspondre à votre modèle
+          participants.push(part);
+        }
+      });
+
+
+
+      // Attendre que toutes les promesses soient résolues
+      await Promise.all(participantPromises);
+
+      console.log('participants from get participants in the room : ' , participants) ;
+
+
+      return res.status(200).json(participants);
+    } else {
+      return res.status(404).json({ error: "Room not found" });
+    }
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: "Internal server error" });
+  }
+};

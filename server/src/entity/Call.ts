@@ -16,6 +16,7 @@ export class Call {
 
   @Column()
   duration!: number;
+  
 
 
 }

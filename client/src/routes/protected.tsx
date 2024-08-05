@@ -3,6 +3,7 @@ import { Navigate, Outlet } from "react-router-dom";
 import Cookies from 'universal-cookie';
 import { RootState } from "../Redux/Store";
 import { jwtDecode } from "jwt-decode";
+import { CallProvider } from "../Context/CallContext";
 
 const Protected = () => {
   const cookies = new Cookies();
@@ -10,7 +11,8 @@ const Protected = () => {
   const authentificate = useSelector((state: RootState) => state.user.authentificate);
 
   if(  usertoken  )
-    return <Outlet />  
+return              <Outlet />   
+
  
   else return  <Navigate to="/authentificate" />;
 };

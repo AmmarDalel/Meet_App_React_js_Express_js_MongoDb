@@ -48,3 +48,23 @@
 .logoContainer {
     margin-left: 5%;
 }
+
+.counterdiv{
+    z-index: 999;
+
+ 
+}
+
+.counetrcontainer{
+    position: absolute;
+    bottom: 93%;
+    right: 30%;
+    background-color: #101826;
+    width: max-content;
+    height: max-content;
+    padding: 8px ;
+
+}
+.videocancel{
+    display: none;
+}

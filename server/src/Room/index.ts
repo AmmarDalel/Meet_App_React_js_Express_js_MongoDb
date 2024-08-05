@@ -12,7 +12,8 @@ interface IJoinRoom{
 interface IRoomParams{
   roomId :string;
   peerId:string;
-  
+  duration:string ;
+
 }
 
 interface ICreateRoom{
@@ -35,8 +36,8 @@ export const RoomHandler = (socket: Socket) => {
       console.log(error)
     }
     socket.emit('room-created' , {roomId}) ;
-    socket.on('disconnect', () => {
-        //leaveRoom({roomId , peerId}) ;
+    socket.on('disconnect', (duration) => {
+        leaveRoom({roomId , peerId , duration}) ;
     ;}) ;
    }
 
@@ -54,21 +55,27 @@ export const RoomHandler = (socket: Socket) => {
     }
 
     socket.on('disconnect', () => {
-     // leaveRoom({roomId , peerId}) ; 
+      
     })
 
    }
   
-   const leaveRoom=({roomId , peerId}:IRoomParams)=>{
-      rooms[roomId]=rooms[roomId].filter((id)=>id!==peerId) ;
-      LeaveParticipant(peerId , roomId) ;
-      socket.to(roomId).emit("user-disconnected" , peerId) ;
-  
+   const leaveRoom=({roomId , peerId , duration}:IRoomParams)=>{
+   
+      socket.on('disconnect', () => {
+        console.log('---------------- user leaved the room'  , peerId)
+        rooms[roomId]=rooms[roomId].filter((id)=>id!==peerId) ;
+        console.log('duration from index : ',duration)
+        LeaveParticipant(peerId , roomId , duration) ;
+        socket.to(roomId).emit("user-disconnected" , peerId) ;
+      })
    }
   
 
   socket.on('create-room', createRoom);
   socket.on('join-room',joinRoom );
+  socket.on('user-leaved',leaveRoom );
+
 
 }
 

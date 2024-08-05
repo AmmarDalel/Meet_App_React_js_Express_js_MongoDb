@@ -11,6 +11,7 @@ import Protected from './routes/protected' ;
 import Home from './pages/Home';
 import Authentificate from './pages/Authentificate';
 import Call from './pages/Call';
+import { RoomProvider } from './Context/SocketIo';
 import LeaveCall from './pages/LeaveCall';
 function App() {
   return (
@@ -19,18 +20,21 @@ function App() {
           <Routes>
             <Route path="/" element={<Protected />}>
               <Route index element={<Home />} />
-              <Route path="/call/:id" element={<Call />} />
-              <Route path="/StartCall/:userid/" element={<StartCall />} />
-
-              {/*<Route path="/call/:callId" element={<Room />} />*/}
-
+              <Route path="/call/:id" element={
+                <RoomProvider>
+                  <Call /> 
+                </RoomProvider>
+              } />
+              <Route path="/StartCall/:userid/" element={
+                  <StartCall />
+                } />
               {/* All other routes that you want to protect will go inside here */}
             </Route>
             <Route path="/ConfirmationCode/:userid/CorrectCode" element={<CorrectCode />} />
             <Route path="/authentificate" element={<Authentificate />} />
             <Route path="/ConfirmationCode" element={<ConfirmationCode />} />
             <Route path="/ConfirmationCode/IncorrectCode" element={<IncorrectCode />} />
-            <Route path="/leavecall" element={<Authentificate />} />
+            <Route path="/call/:id/leavecall" element={<LeaveCall />} />
 
           </Routes>
       </Provider>
