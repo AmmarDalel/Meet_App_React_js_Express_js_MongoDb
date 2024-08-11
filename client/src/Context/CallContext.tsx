@@ -1,12 +1,8 @@
-import { createContext, ReactNode, useEffect, useReducer, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { createContext, ReactNode, useEffect,  useState } from "react";
 import socketIO from 'socket.io-client' ;
 import Peer from 'peerjs' ;
 import {v4 as uuidV4} from "uuid" ;
-import { peerReducer } from "./peerReducer";
-import { addPeerAction, removePeerAction } from "./peerActions";
-import { useSelector } from "react-redux";
-import { RootState } from "../Redux/Store";
+
 
 const WS='http://localhost:5000' ;
 
@@ -29,9 +25,6 @@ export const CallProvider: React.FC<CallProviderProps> =({children})=>{
 //console.log('me from call context : ',peer)
    } ,[])
 
-   useEffect(()=>{
-  
-   } ,[me])
  
 
   

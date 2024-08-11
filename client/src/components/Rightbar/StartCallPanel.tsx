@@ -36,6 +36,8 @@ function StartCallPanel() {
 
       const createRoom = async () => {
         console.log('user id to create room : ',userId , email)
+        console.log('me: ',me)
+
         ws.emit('create-room' , { userId : userId ,peerId:me._id ,email :email}) ;
         ws.on('room-created', ( {roomId}) => {
           console.log('Room created with ID:', roomId);
@@ -49,6 +51,8 @@ function StartCallPanel() {
 
       const joinRoom=async () => {
         console.log('targetid : ',targetid)
+        console.log('me: ',me)
+
         const roomId=targetid ;
        ws.emit('join-room',{roomId: roomId , peerId:me._id , email :email})
        ws.on('new user is joined the room',()=>{

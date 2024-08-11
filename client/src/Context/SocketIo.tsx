@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { AppDispatch, RootState } from "../Redux/Store";
 import { peerReducer } from "./peerReducer";
-import { addPeerAction, removePeerAction } from "./peerActions";
+import { addPeerAction, removePeerAction, updatePeerAudioAction, updatePeerVideoAction } from "./peerActions";
 import { CallContext } from "./CallContext";
 import { setparticipants } from "../Redux/features/user";
 
@@ -26,6 +26,9 @@ export const RoomProvider: React.FC<CallProviderProps> = ({ children }) => {
     const connectionRef = useRef<any>(null);
     const [callEnded, setCallEnded] = useState(false);
     const videoRef = useRef<HTMLVideoElement>(null);
+    const [screenSharingId, setScreenSharingId] = useState<string>("");
+    const [streamSharing, setStreamSharing] = useState<MediaStream | null>(null);
+    const [screenSharingIdOtherUser, setScreenSharingIdOtherUser] = useState<string>("");
 
     const enterRoom = ({ roomId }: { roomId: string }) => {
         navigate(`/call/${roomId}`);
@@ -41,24 +44,19 @@ export const RoomProvider: React.FC<CallProviderProps> = ({ children }) => {
         console.log({ participants });
     };
 
-    useEffect(() => {
-        if (videoRef.current && stream) {
-            videoRef.current.srcObject = stream;
-        }
-    }, [stream]);
-
     const leaveCallHandler = () => {
         setCallEnded(true);
         if (connectionRef.current) {
             connectionRef.current.destroy();
-            removePeer(me) ;
+            removePeer(me.id);
         }
-        navigate(`/call/${roomId}/leavecall`) ;
+        navigate(`/call/${roomId}/leavecall`);
         window.location.reload();
-
     };
 
     useEffect(() => {
+        if (!ws || !me) return;
+
         ws.on("room-create", enterRoom);
 
         navigator.mediaDevices.getUserMedia({ video: true, audio: false })
@@ -66,7 +64,7 @@ export const RoomProvider: React.FC<CallProviderProps> = ({ children }) => {
                 setStream(stream);
             })
             .catch((error) => {
-                console.log(error);
+                console.error(error);
             });
 
         ws.on("get-users", getUsers);
@@ -75,21 +73,43 @@ export const RoomProvider: React.FC<CallProviderProps> = ({ children }) => {
             ws.off("room-create", enterRoom);
             ws.off("get-users", getUsers);
         };
-    }, [ws]);
+    }, [ws, me]);
+
+    /*useEffect(() => {
+        if (stream) {
+            stream.getAudioTracks().forEach(track => track.enabled = false);
+        }
+    }, [stream]);*/
 
     useEffect(() => {
-        if (!me || !stream) return;
+        if (!me || !stream) {
+            return;
+        }
 
         ws.on('user-joined', (peerId: any) => {
+            console.log('****************** user joined ', peerId);
+
             const call = me.call(peerId, stream);
-            call.on("stream", (peerStream: any) => {
-                peerDispatch(addPeerAction(peerId, peerStream));
-            });
+
+            if (call) {
+                call.on("stream", (peerStream: any) => {
+
+                    peerDispatch(addPeerAction(peerId, peerStream));
+                });
+            } else {
+                console.error('Call object is null or undefined');
+            }
         });
 
         me.on("call", (call: any) => {
-            call.answer(stream);
-            call.on("stream", (peerStream: any) => peerDispatch(addPeerAction(call.peer, peerStream)));
+            if (call) {
+                call.answer(stream);
+                call.on("stream", (peerStream: any) => {
+                    peerDispatch(addPeerAction(call.peer, peerStream));
+                });
+            } else {
+                console.error('Call object is null or undefined');
+            }
         });
 
         return () => {
@@ -108,10 +128,78 @@ export const RoomProvider: React.FC<CallProviderProps> = ({ children }) => {
         return () => clearInterval(timerId);
     }, [stream]);
 
-   // console.log('peers : ', peers);
+    const VoiceControl =async () => {
+        if (stream) {
+            const audioTracks = stream.getAudioTracks();
+            if (audioTracks.length > 0) {
+                const enabled=!audioTracks[0].enabled ;
+                audioTracks.forEach(track => track.enabled = enabled);
+                await ws.emit('toggle-audio', { peerId: me.id, enabled });
+                peerDispatch(updatePeerAudioAction(me.id, enabled));
+            }
+        }
+    };
+
+    const CamControl = async () => {
+        if (stream) {
+            const videoTracks = stream.getVideoTracks();
+            if (videoTracks.length > 0) {
+                const enabled = !videoTracks[0].enabled;
+                videoTracks.forEach(track => track.enabled = enabled);
+                await ws.emit('toggle-video', { peerId: me.id, enabled });
+                peerDispatch(updatePeerVideoAction(me.id, enabled));
+            }
+        }
+    };
+
+    const switchStream =  (stream: MediaStream) => {
+        setStreamSharing(stream);
+
+        if (screenSharingId) {
+            setScreenSharingId("");
+             ws.emit('stop-sharing', roomId);
+             ws.on('user-stopp', () => {
+                console.log('hello')
+                setScreenSharingIdOtherUser("");
+
+            });
+          
+        } else {
+            setScreenSharingId(me?.id);
+        }
+
+        if (me && me.connections) {
+            Object.values(me.connections).forEach((connections: any) => {
+                connections.forEach((connection: any) => {
+                    const videoTrack = stream.getTracks().find((track) => track.kind === "video");
+                    if (videoTrack) {
+                        connection.peerConnection.getSenders().forEach((sender: RTCRtpSender) => {
+                            if (sender.track && sender.track.kind === "video") {
+                                sender.replaceTrack(videoTrack).catch((err: any) => console.error(err));
+                            }
+                        });
+                    }
+                });
+            });
+        } else {
+            console.log('error');
+        }
+    };
+
+    const Screensharing = async () => {
+        if (screenSharingId) {
+            const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+            switchStream(stream);
+        } else {
+            const stream = await navigator.mediaDevices.getDisplayMedia({});
+            switchStream(stream);
+        }
+    };
+
+
 
     return (
-        <SocketContext.Provider value={{ leaveCall: leaveCallHandler,callEnded ,stream, peers, timeElapsed }}>
+        <SocketContext.Provider value={{ leaveCall: leaveCallHandler, callEnded, stream, peers, timeElapsed, VoiceControl, CamControl, Screensharing, screenSharingId, me, streamSharing, screenSharingIdOtherUser }}>
             {children}
         </SocketContext.Provider>
     );

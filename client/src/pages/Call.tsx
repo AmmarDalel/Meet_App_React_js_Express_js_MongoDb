@@ -8,13 +8,16 @@ import { setCallId } from '../Redux/features/user'
 import Cookies from 'universal-cookie';
 import {jwtDecode} from 'jwt-decode'
 import SessionId from '../components/Rightbar/SessionId'
+import { useEffect } from 'react'
 function Call() {
     const {id}=useParams<string>() ;
     const dispatch = useDispatch<AppDispatch>();
     const cookies = new Cookies();
     const usertoken = cookies.get('user');
     const userdata = jwtDecode(usertoken.token); 
-    dispatch(setCallId(String(id)));
+    useEffect(() => {
+      dispatch(setCallId(String(id)));
+    }, [dispatch, id]);
     
   return (
     <div className='appcontainer'> 

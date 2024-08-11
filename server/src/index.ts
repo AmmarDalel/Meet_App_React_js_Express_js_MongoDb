@@ -80,6 +80,7 @@ app.use(Session({
 io.on('connection', (socket: Socket) => {
   console.log(`User connected: ${socket.id}`);
   RoomHandler(socket) ;
+
 });
 // Démarrer le serveur
 server.listen(port, () => console.log(`Server is running on port ${port}`));

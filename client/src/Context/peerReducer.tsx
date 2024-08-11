@@ -1,4 +1,4 @@
-import { ADD_PEER , REMOVE_PEER } from "./peerActions";
+import { ADD_PEER , REMOVE_PEER, UPDATE_PEER_AUDIO, UPDATE_PEER_VIDEO } from "./peerActions";
 
 export type PeerState=Record<string ,{stream:MediaStream}> ;
 type PeerAction= {
@@ -8,7 +8,9 @@ type PeerAction= {
 {
     type:typeof REMOVE_PEER ;
     payload:{peerId:string} ;  
-} ;
+} 
+| { type: typeof UPDATE_PEER_VIDEO; payload: { peerId: string; videoEnabled: boolean } }
+| { type: typeof UPDATE_PEER_AUDIO; payload: { peerId: string; AudioEnabled: boolean } };
 
 export const peerReducer=(state:PeerState , action:PeerAction)=>{
     switch(action.type){
@@ -32,7 +34,32 @@ export const peerReducer=(state:PeerState , action:PeerAction)=>{
                    console.log('REMOVE_PEER : ',rest ) ;
                 
                    return rest ;
+
+            
+            case UPDATE_PEER_VIDEO:
+                console.log('UPDATE_PEER : ' ,action.payload.videoEnabled) ;
+            return {
+                ...state,
+                [action.payload.peerId]: {
+                    ...state[action.payload.peerId],
+                    videoEnabled: action.payload.videoEnabled
+                }
+            };
+
+            case UPDATE_PEER_AUDIO :
+                console.log('UPDATE_PEER : ' ,action.payload.AudioEnabled) ;
+            return {
+                ...state,
+                [action.payload.peerId]: {
+                    ...state[action.payload.peerId],
+                    AudioEnabled: action.payload.AudioEnabled
+                }
+            };
+              
+              
             default :
             return {...state} ;
     }
 }
+
+

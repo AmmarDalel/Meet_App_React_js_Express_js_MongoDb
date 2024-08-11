@@ -1,11 +1,7 @@
 .ControllBarContainer{
-    z-index: 999;
-    position:end;
     width: 100%;
     height: 100px;
     background-color: #17202e;
-    margin-top: auto;
-    margin-bottom: -10px;
     border: 1px solid #26303f;
     display: flex;
     column-gap: 20px;
@@ -54,4 +50,23 @@
     align-items: center;
     column-gap: 5px;
     cursor: pointer;
+}
+
+.iconmsgcontainer{
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+   
+ }
+.msgparam{
+    color:#757575 ;
+    font-size: 10px;
+    background-color: #26303f;
+    text-align: center;
+    padding: 3px;
+    bottom: 80px;
+    /*width: 76px;*/
+    border-radius: 2px;
+
 }
