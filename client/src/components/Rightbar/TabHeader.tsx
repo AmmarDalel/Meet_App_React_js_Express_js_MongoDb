@@ -11,7 +11,7 @@ interface ButtonProps {
   textcolor:string;
   event :() => void;
 }
- export function Button({icon , title , color , textcolor , event}:ButtonProps){
+ export function TabHeaderButton({icon , title , color , textcolor , event}:ButtonProps){
   return(
     <div className='buttonheader' style={{backgroundColor:`${color}` }} onClick={event} >
       <div>{icon}</div>

@@ -5,7 +5,7 @@ import { AppDispatch, RootState } from "../Redux/Store";
 import { peerReducer } from "./peerReducer";
 import { addPeerAction, removePeerAction, updatePeerAudioAction, updatePeerVideoAction } from "./peerActions";
 import { CallContext } from "./CallContext";
-import { setparticipants } from "../Redux/features/user";
+import { setLeavecall, setparticipants } from "../Redux/features/user";
 
 export const SocketContext = createContext<null | any>(null);
 
@@ -25,10 +25,10 @@ export const RoomProvider: React.FC<CallProviderProps> = ({ children }) => {
     const [timeElapsed, setTimeElapsed] = useState<number>(0);
     const connectionRef = useRef<any>(null);
     const [callEnded, setCallEnded] = useState(false);
-    const videoRef = useRef<HTMLVideoElement>(null);
     const [screenSharingId, setScreenSharingId] = useState<string>("");
     const [streamSharing, setStreamSharing] = useState<MediaStream | null>(null);
     const [screenSharingIdOtherUser, setScreenSharingIdOtherUser] = useState<string>("");
+    const [userleavethecall, setUserleavethecall] = useState<any>();
 
     const enterRoom = ({ roomId }: { roomId: string }) => {
         navigate(`/call/${roomId}`);
@@ -41,24 +41,23 @@ export const RoomProvider: React.FC<CallProviderProps> = ({ children }) => {
     const getUsers = ({ participants }: { participants: string[] }) => {
         setParticipants(participants);
         dispatch(setparticipants(participants));
-        console.log({ participants });
+
     };
 
-    const leaveCallHandler = () => {
+    const leaveCallHandler = async() => {
         setCallEnded(true);
         if (connectionRef.current) {
             connectionRef.current.destroy();
             removePeer(me.id);
         }
+        await ws.emit('user-leaved',{roomId, peerId:me.id, duration:timeElapsed}) ;
         navigate(`/call/${roomId}/leavecall`);
         window.location.reload();
     };
 
     useEffect(() => {
         if (!ws || !me) return;
-
         ws.on("room-create", enterRoom);
-
         navigator.mediaDevices.getUserMedia({ video: true, audio: false })
             .then((stream) => {
                 setStream(stream);
@@ -66,9 +65,7 @@ export const RoomProvider: React.FC<CallProviderProps> = ({ children }) => {
             .catch((error) => {
                 console.error(error);
             });
-
         ws.on("get-users", getUsers);
-
         return () => {
             ws.off("room-create", enterRoom);
             ws.off("get-users", getUsers);
@@ -82,18 +79,14 @@ export const RoomProvider: React.FC<CallProviderProps> = ({ children }) => {
     }, [stream]);*/
 
     useEffect(() => {
-        if (!me || !stream) {
+        if (!me || !stream || !ws) {
             return;
         }
 
         ws.on('user-joined', (peerId: any) => {
-            console.log('****************** user joined ', peerId);
-
             const call = me.call(peerId, stream);
-
             if (call) {
-                call.on("stream", (peerStream: any) => {
-
+                call.on("stream", async(peerStream: any) => {
                     peerDispatch(addPeerAction(peerId, peerStream));
                 });
             } else {
@@ -128,6 +121,14 @@ export const RoomProvider: React.FC<CallProviderProps> = ({ children }) => {
         return () => clearInterval(timerId);
     }, [stream]);
 
+    useEffect(()=>{
+        ws.on('user-disconnected',({peerId , participant}:any)=>{
+            peerDispatch(removePeerAction(peerId));
+            dispatch(setLeavecall(true)) ;
+            setUserleavethecall(participant) ; 
+        })
+    }, [peers])
+
     const VoiceControl =async () => {
         if (stream) {
             const audioTracks = stream.getAudioTracks();
@@ -154,14 +155,11 @@ export const RoomProvider: React.FC<CallProviderProps> = ({ children }) => {
 
     const switchStream =  (stream: MediaStream) => {
         setStreamSharing(stream);
-
         if (screenSharingId) {
             setScreenSharingId("");
              ws.emit('stop-sharing', roomId);
              ws.on('user-stopp', () => {
-                console.log('hello')
                 setScreenSharingIdOtherUser("");
-
             });
           
         } else {
@@ -199,7 +197,7 @@ export const RoomProvider: React.FC<CallProviderProps> = ({ children }) => {
 
 
     return (
-        <SocketContext.Provider value={{ leaveCall: leaveCallHandler, callEnded, stream, peers, timeElapsed, VoiceControl, CamControl, Screensharing, screenSharingId, me, streamSharing, screenSharingIdOtherUser }}>
+        <SocketContext.Provider value={{ leaveCall: leaveCallHandler, callEnded, stream, peers, timeElapsed, VoiceControl, CamControl, Screensharing, screenSharingId, me, streamSharing, screenSharingIdOtherUser , userleavethecall }}>
             {children}
         </SocketContext.Provider>
     );

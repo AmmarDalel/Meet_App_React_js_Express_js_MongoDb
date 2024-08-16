@@ -1,7 +1,7 @@
 import './Sidebar.css';
-import  { AppsIcon, Button, UserIcon } from './TabHeader';
+import  { AppsIcon, TabHeaderButton, UserIcon } from './TabHeader';
 import './Form.css' ;
-import { useContext, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import PersonIcon from '@mui/icons-material/Person';
 import VideocamIcon from '@mui/icons-material/Videocam';
 import KeyboardVoiceIcon from '@mui/icons-material/KeyboardVoice';
@@ -9,14 +9,17 @@ import { styled } from '@mui/material/styles';
 import Badge from '@mui/material/Badge';
 import Avatar from '@mui/material/Avatar';
 import Stack from '@mui/material/Stack';
-import image from '../../assets/avatar/image.png'
 import { ParticipantsContext, ParticipantsProvider } from '../../Data/participants';
 import { RootState } from '../../Redux/Store';
 import { useSelector } from 'react-redux';
+import  Button  from '@mui/material/Button';
+import { Box } from '@mui/system';
+import { SocketContext } from '../../Context/SocketIo';
+import VideocamOffIcon from '@mui/icons-material/VideocamOff';
+import MicOffIcon from '@mui/icons-material/MicOff';
 
 function RightSidebar({children}:{children:any}) {
   var [participantsbutton , setParticipantsbutton]=useState(false) ;
-
   return(
    participantsbutton? <ParticipantsProvider><Participants setParticipants={setParticipantsbutton} participantsbutton={participantsbutton}/> </ParticipantsProvider>
    : <Apps  children={children} setParticipants={setParticipantsbutton} participantsbutton={participantsbutton}/> 
@@ -25,10 +28,10 @@ function RightSidebar({children}:{children:any}) {
  
 }
 
-const StyledBadge = styled(Badge)(({ theme }) => ({
+const StyledBadge = styled(Badge)(({ theme , color }) => ({
   '& .MuiBadge-badge': {
-    backgroundColor: '#44b700',
-    color: '#44b700',
+    backgroundColor: color,
+    color: color,
     boxShadow: `0 0 0 2px ${theme.palette.background.paper}`,
     '&::after': {
       position: 'absolute',
@@ -54,54 +57,41 @@ const StyledBadge = styled(Badge)(({ theme }) => ({
   },
 }));
 
-
-  function BadgeAvatars() {
+  function BadgeAvatars({ badgeColor , avatar , name}:{ badgeColor:any , avatar:string , name:string}) {
   return (
     <Stack direction="row" spacing={2}>
       <StyledBadge
         overlap="circular"
         anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-        variant="dot"
+        variant="dot" 
+        color={badgeColor}
       >
-        <Avatar alt="Remy Sharp" src={image} />
+        <Avatar alt={name} src={avatar} />
       </StyledBadge>
      
     </Stack>
   );
 }
 
-
-
-
 function TabHeader({participantsbutton , setParticipants}:any){
-
   const participantsHandler=()=>{
     setParticipants(true);
   }
   const appsHandler=()=>{
-
     setParticipants(false);
   }
   return (
     <div className='tabheadercontainer'>
       <div className='componentbuttoncontainer'>
-
-        <Button  icon={participantsbutton ? <PersonIcon/> : <UserIcon/> } event={participantsHandler}title='Participants'   color={participantsbutton ? '#2d8cff' : 'transparent'}  textcolor={participantsbutton ? 'white' : '#9ca3af'} />
-        <Button icon={<AppsIcon/>} event={appsHandler} title='Apps'   color={participantsbutton ? 'transparent' : '#2d8cff'} textcolor={participantsbutton ? '#9ca3af' : 'white'}/>
-
+        <TabHeaderButton  icon={participantsbutton ? <PersonIcon/> : <UserIcon/> } event={participantsHandler}title='Participants'   color={participantsbutton ? '#2d8cff' : 'transparent'}  textcolor={participantsbutton ? 'white' : '#9ca3af'} />
+        <TabHeaderButton icon={<AppsIcon/>} event={appsHandler} title='Apps'   color={participantsbutton ? 'transparent' : '#2d8cff'} textcolor={participantsbutton ? '#9ca3af' : 'white'}/>
       </div>
     </div>
   )
 }
 
-
-
-
-
-
 export function Apps({children , participantsbutton , setParticipants}:{children:any , participantsbutton :any , setParticipants : any}){
   const roomId=useSelector((state:RootState)=>state.user.callId);
-
   return (
     <div className='sidebarcontainer'>
 {      roomId ? <TabHeader participantsbutton={participantsbutton}  setParticipants ={setParticipants}/> :<></>
@@ -122,46 +112,87 @@ export function Apps({children , participantsbutton , setParticipants}:{children
 }
 
 function Participants({ participantsbutton , setParticipants}:{ participantsbutton :any , setParticipants : any}){
-  //const { participants} = useParticipants();
   try{
-    const {participants} = useContext(ParticipantsContext);
+    const {participants , userId} = useContext(ParticipantsContext);
+    const {userleavethecall , stream} = useContext(SocketContext);
+    const [ParticipantList ,setParticipantList]=useState<string[]>([]); 
+    const [VideoTracks, setVideoTracks] = useState(false) ;
+    const [AudioTracks, setAudioTracks] = useState(false) ;
+    const [hostvideoTracks, setHostVideoTracks] = useState(false) ;
+    const [hostaudioTracks, setHostAudioTracks] = useState(false) ;
+   
+    useEffect(()=>{
+      try{
+        stream.getVideoTracks().forEach(track => {setHostVideoTracks(track.enabled)} )
+      }
+      catch(error){
+        setHostVideoTracks(false) ;
+        console.log(error) ;
+      }
+      try{
+        stream.getAudioTracks().forEach(track => {setHostAudioTracks(track.enabled)} ) 
+      }
+      catch(error){
+        setHostAudioTracks(false) ;
+        console.log(error) ;
+      }
+    } , [stream])
+
+    useEffect(()=>{
+      setParticipantList(participants) ;
+    }, [participants])
+
+    useEffect(()=>{
+      console.log('user leave the call : ' , userleavethecall)    ;
+
+    }, [userleavethecall])
 
     return (
       <div className='sidebarcontainer'>
         <TabHeader participantsbutton={participantsbutton}  setParticipants ={setParticipants}/>
        <div className='participantslist'>
-       {participants.map((participant:any, index:any) => (
-            // Affichage des détails du participant avec le composant Participant
-            <Participant key={index} name={participant.name} />
-          ))}
+        {ParticipantList.map((participant:any, index:any) => (
+              <>
+                {participant.id == userId  ? <Participant key={index} name={participant.fullName}  color='#44b700' avatar={participant.avatar} audioTracks={hostaudioTracks} videoTracks={hostvideoTracks}/>
+                  :<Participant key={index} name={participant.fullName}  color='#44b700' audioTracks={AudioTracks}  avatar={participant.avatar} videoTracks={VideoTracks} />
+                }
+              </>
+            ))}
+            {userleavethecall && <Participant name={userleavethecall.fullName} color='red'  avatar={userleavethecall.avatar} videoTracks={false} audioTracks={false}   />
+          }
        </div>
+      <Box sx={{ display:'flex' , justifyContent:'end' , paddingRight:'4%', marginTop:'10%'}}>
+        <Button  variant="outlined"   sx={{
+            fontSize: '12px',
+            borderRadius: '8px',
+            width: 'max-content',
+            height:'30px',
+            textTransform: 'none', 
+            paddingLeft:'20px'
+          }}
+          >Invite</Button>
+      </Box>
+
       </div>
     )
 
   }
 
-
-
   catch(error){
     console.log(error)
   }
-
-
- 
 }
 
-function Participant({name}:{name:string}){
+function Participant({name , color, audioTracks , videoTracks , avatar}:{name:string , color:string , audioTracks:boolean , videoTracks : boolean  , avatar:string}){
 
   return( 
-    
     <div className='participantcontainer'>
         <div id='content'>
-          <BadgeAvatars/>
+          <BadgeAvatars badgeColor={color} avatar={avatar} name={name}/>
           <p className='participantname'>{name}</p>
           <div className='participantcontroll'>
-          <KeyboardVoiceIcon />
-          <VideocamIcon/>
-
+            {audioTracks ? <KeyboardVoiceIcon /> :<MicOffIcon/>}
+            {videoTracks ? <VideocamIcon/> : <VideocamOffIcon/>}
           </div>
         </div>
     </div>

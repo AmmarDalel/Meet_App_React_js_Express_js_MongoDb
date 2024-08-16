@@ -2,23 +2,16 @@ import { Request, Response } from 'express';
 import { getUserRepository } from "../BdConnection";
 import { User } from '../entity/User';
 import { SendMailOptions, SentMessageInfo, createTransport } from 'nodemailer';
-import { v4 as uuidv4 } from 'uuid'; 
 
 let userRepository = getUserRepository();
-export const authenticate = async (req: Request, res: Response) => {  
-    const { fullName, email } = req.body;
+export const authenticate = async ( req:Request  , res:Response) => { 
+    const { myFile , fullname, email  } = req.body;
+
     let user:User|null ;
     let user2:User|null ;
-
-    user = await userRepository.findOne({ where: { fullName , email} });
+    
+    user = await userRepository.findOne({ where: { fullName : fullname, email} });
     user2=await userRepository.findOne({where :  {email} }) ;
-
-    let s=user2 && !user ;
-    let s2=!user ;
-
-    console.log(s);
-    console.log(s2);
-
 
     if(user2 && !user){
       res.status(500).json({ message: 'Incorrect  Full name !' });
@@ -26,9 +19,9 @@ export const authenticate = async (req: Request, res: Response) => {
 
     else if (!user) {
         user = new User();
-       // user.id = uuidv4(); // Génère un identifiant unique
         user.email = email;
-        user.fullName = fullName;
+        user.fullName = fullname;
+      if(myFile) user.avatar=myFile ;
         await userRepository.save(user);
     }
 
@@ -65,12 +58,11 @@ export const authenticate = async (req: Request, res: Response) => {
                 return res.status(500).json({ message: 'Failed to send confirmation email' });
               }
             } else {
-              console.log('Email sent: ' + info.response);
-               // Vérifier si l'erreur est due à une adresse email introuvable
-           
+              console.log('Email sent: ' + info.response);           
             }
           });
           user.confirmationCode=parseInt(confirmationCode) ;
+          if(myFile) user.avatar=myFile ;
           await userRepository.save(user);
           res.status(200).json({ message: 'User successfully authenticated' ,user });
         }
@@ -80,14 +72,10 @@ export const authenticate = async (req: Request, res: Response) => {
     }
 
   }
-
-
+  
   export const CodeSend=async (req: Request, res: Response)=>{
     const {email}=req.body ;
-    console.log('email from codesend method : ',email)
-
     const user = await userRepository.findOne({ where: {email:email} });
-    console.log('user from code send : ',user)
     const confirmationCode = Math.floor(100000 + Math.random() * 900000).toString();
 
     try {
@@ -121,9 +109,7 @@ export const authenticate = async (req: Request, res: Response) => {
                 return res.status(500).json({ message: 'Failed to send confirmation email' });
               }
             } else {
-              console.log('Email sent: ' + info.response);
-               // Vérifier si l'erreur est due à une adresse email introuvable
-           
+              console.log('Email sent: ' + info.response);           
             }
           });
           user.confirmationCode=parseInt(confirmationCode) ;

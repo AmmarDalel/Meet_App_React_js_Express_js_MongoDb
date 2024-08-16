@@ -25,7 +25,6 @@ interface ICreateRoom {
 export const RoomHandler = (socket: Socket) => {
 
     const createRoom = async ({ userId, peerId, email }: ICreateRoom) => {
-        console.log(userId);
         const roomId = uuidV4();
         rooms[roomId] = [];
         rooms[roomId].push(peerId);
@@ -41,7 +40,6 @@ export const RoomHandler = (socket: Socket) => {
         if (rooms[roomId]) {
             rooms[roomId].push(peerId);
             socket.join(roomId);
-            console.log('roomId from joinRoom : ', roomId);
 
             socket.broadcast.emit("user-joined", peerId);
 
@@ -55,16 +53,14 @@ export const RoomHandler = (socket: Socket) => {
 
     const leaveRoom = async ({ roomId, peerId, duration }: IRoomParams) => {
         socket.on('disconnect', async () => {
-            console.log('---------------- user left the room', peerId);
             rooms[roomId] = rooms[roomId].filter((id) => id !== peerId);
-            console.log('duration from index: ', duration);
-            await LeaveParticipant(peerId, roomId, duration);
-            socket.to(roomId).emit("user-disconnected", peerId);
+           const participant= await LeaveParticipant(peerId, roomId, duration);
+            socket.to(roomId).emit("user-disconnected", {peerId , participant});
         });
     };
 
     const startSharing = async ({ roomId, peerId }: { roomId: string, peerId: string }) => {
-        console.log("user-started-sharing", peerId, ' roomId : ', roomId);
+       // console.log("user-started-sharing", peerId, ' roomId : ', roomId);
         try {
             socket.broadcast.emit("user-started-sharing", peerId);
         } catch (error) {
@@ -73,7 +69,7 @@ export const RoomHandler = (socket: Socket) => {
     };
 
     const stopSharing = async (roomId: string) => {
-        console.log("user-stop-sharing, roomId : ", roomId , typeof socket.rooms);
+      //  console.log("user-stop-sharing, roomId : ", roomId , typeof socket.rooms);
         socket.to(roomId).emit("user-Stopp");
     };
 
@@ -82,4 +78,5 @@ export const RoomHandler = (socket: Socket) => {
     socket.on('user-leaved', leaveRoom);
     socket.on('start-sharing', startSharing);
     socket.on('stop-sharing', stopSharing);
+    
 };

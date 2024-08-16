@@ -38,6 +38,10 @@ export class Room {
     @Column()
     duration!: string[];
  
+    
+    @Column()
+    durationHistory!: string[];
+ 
 
 }
 

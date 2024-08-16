@@ -6,9 +6,10 @@ function StartCall() {
   return (
     <div className='appcontainer'> 
     <EmptyRoomContainer/>
-    <RightSidebar>
-        <StartCallPanel/>
-    </RightSidebar>
+      <RightSidebar>
+          <StartCallPanel/>
+      </RightSidebar>
+   
     
   </div> 
   )

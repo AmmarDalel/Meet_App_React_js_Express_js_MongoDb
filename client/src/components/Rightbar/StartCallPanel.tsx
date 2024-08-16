@@ -1,5 +1,5 @@
 import React , { useContext, useState } from 'react'
-import InputComponent from './Input'; // Assurez-vous que le chemin vers InputComponent est correct
+import InputComponent from './Input'; 
 import { Button } from '@mui/material';
 import './StartCallPanel.css';
 import { CallContext } from '../../Context/CallContext';
@@ -13,9 +13,7 @@ import { setCallId } from '../../Redux/features/user';
 function StartCallPanel() {
   const navigate=useNavigate() ;
     const [targetid, setTargetid] = useState('');
-   // const userId=useSelector((state:RootState)=>state.user.id);
-   const dispatch = useDispatch<AppDispatch>();
-
+    const dispatch = useDispatch<AppDispatch>();
     const { ws  , me} = useContext(CallContext);
     const cookies = new Cookies();
     var usertoken=null ;
@@ -33,59 +31,42 @@ function StartCallPanel() {
       console.log(error) ;
     }
 
+    const createRoom = async () => {
+      ws.emit('create-room' , { userId : userId ,peerId:me._id ,email :email}) ;
+      ws.on('room-created', ( {roomId}) => {
+        dispatch(setCallId(roomId)) ;
+        navigate(`/call/${roomId}`) ;
+      }); 
+    };
 
-      const createRoom = async () => {
-        console.log('user id to create room : ',userId , email)
-        console.log('me: ',me)
-
-        ws.emit('create-room' , { userId : userId ,peerId:me._id ,email :email}) ;
-        ws.on('room-created', ( {roomId}) => {
-          console.log('Room created with ID:', roomId);
-          dispatch(setCallId(roomId)) ;
-          navigate(`/call/${roomId}`) ;
-        });
-
-        
-       
-      };
-
-      const joinRoom=async () => {
-        console.log('targetid : ',targetid)
-        console.log('me: ',me)
-
-        const roomId=targetid ;
-       ws.emit('join-room',{roomId: roomId , peerId:me._id , email :email})
-       ws.on('new user is joined the room',()=>{
-        console.log('new user is joined the room')
+    const joinRoom=async () => {
+      const roomId=targetid ;
+      ws.emit('join-room',{roomId: roomId , peerId:me._id , email :email})
+      ws.on('new user is joined the room',()=>{
+          console.log('new user is joined the room')
       })
-       // roomId=targetid ;
-        navigate(`/call/${targetid}`) ;
-      
-      };
-
+      navigate(`/call/${targetid}`) ;
+    };
 
   return (
     <div style={{ padding: '16px' }}>
-    <InputComponent
-      title='Target Id' 
-      inputtype='text'
-      value={targetid}
-      changevalue={(e: React.ChangeEvent<HTMLInputElement>) => setTargetid(e.target.value)}
-
-    />
-        <Button  variant="outlined" sx={{
-          marginTop:'75%',
-          fontSize: '12px',
-          borderRadius: '8px',
-          width: '100%',
-          height:'44px',
-          textTransform: 'none', // Remove uppercase
-          backgroundColor:'#2D8CFF',
-          color:'white',
-          border:'none'
-        
-
-        }}
+      <InputComponent
+        title='Target Id' 
+        inputtype='text'
+        value={targetid}
+        changevalue={(e: React.ChangeEvent<HTMLInputElement>) => setTargetid(e.target.value)}
+      />
+      <Button  variant="outlined" sx={{
+        marginTop:'75%',
+        fontSize: '12px',
+        borderRadius: '8px',
+        width: '100%',
+        height:'44px',
+        textTransform: 'none', // Remove uppercase
+        backgroundColor:'#2D8CFF',
+        color:'white',
+        border:'none'
+          }}
         onClick={()=>{  (targetid!='')? joinRoom(): createRoom() }}
         >Start Call</Button>
     </div>

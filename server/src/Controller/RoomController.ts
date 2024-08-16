@@ -3,9 +3,7 @@ import { getRoomRepository, getUserRepository , getHistoricCallRepository } from
 import { createConversation } from "./ConversationController";
 import { Call } from "../entity/Call";
 import { Request, Response } from "express";
-import internal from "stream";
-import { ObjectId } from "typeorm";
-import e from "cors";
+
 
 
 const roomRepository = getRoomRepository(); 
@@ -61,55 +59,61 @@ export const AddParticipant = async (email: string, peerId: string, roomId: stri
       throw new Error(`Room with id ${roomId} not found`);
     }
     // Ajouter le participant à la salle
-    console.log(room.participants) ;
     room.participantsInTheRoom.push(participant.id) ;
     room.participants.push(participant.id) ;
-    console.log(room.participants) ;
     // Sauvegarder les modifications de la salle
-    await roomRepository.update(room.id, { participants: room.participants });
+    const test =await roomRepository.update(room.id, { participants: room.participants , participantsInTheRoom:room.participantsInTheRoom }, );
 
   } catch (error) {
     console.error('Error adding participant:', error);
   }
 };
 
-export const LeaveParticipant = async ( peerId: string, roomId: string , duration:string) => {
-  try{
-    const participant = await userRepository.findOne({ where: {peerid: peerId } });
-    const room = await roomRepository.findOne({ where: {roomId:roomId } });
 
-    if(participant && room){
+export const LeaveParticipant = async (peerId: string, roomId: string, duration: string) => {
+  try {
+    // Recherche du participant par peerId
+    const participant = await userRepository.findOne({ where: { peerid: peerId } });
+    // Recherche de la salle par roomId
+    const room = await roomRepository.findOne({ where: { roomId: roomId } });
 
-      const updatedParticipants = room.participantsInTheRoom.filter(participantroom => participantroom !== participant.id);
-      console.log(participant) ;
-     
-     if(!room.duration) room.duration=[] ;
-     const currentDate=new Date() ;
-     const currentTime=currentDate.getTime() ;
-     console.log('currentDate : ', currentDate) ;
-     console.log('currentTime : ',currentTime) ;
-     console.log(duration)
-     console.log('duration : ' , parseInt(duration) )
-     const test =currentDate.getTime() - parseInt(duration) ;
-     console.log('test : ', test)
-     const startTime = new Date(test);
-     console.log('start time : ',startTime)
-
-     //room.duration.push(`the participant ${participant.id} enter the room on [time of join] and left after ${duration} mn`)
-    
+    if (participant && room) {
+      // Filtrage des participants de la salle pour enlever le participant qui quitte
   
-    
+      const updatedParticipants = room.participantsInTheRoom.filter(participantRoom => String(participantRoom) !== String(participant.id));
+      room.participantsInTheRoom= updatedParticipants ;
+      // Si room.durationHistory n'existe pas, l'initialiser comme un tableau vide
+      if (!room.durationHistory) room.durationHistory = [];
 
+      const currentDate = new Date();
+      const currentTime = currentDate.getTime();
+      const durationInMilliseconds = parseInt(duration) * 1000; // Assurez-vous que la durée est en secondes et non en millisecondes
 
-    }}
-  catch(error){
-    console.log(error) ;
+      // Calcul du temps d'entrée en soustrayant la durée de l'appel du temps actuel
+      const entryTime = new Date(currentTime - durationInMilliseconds);
+
+      // Conversion de la durée en hh:mm:ss
+      const durationInSeconds = Math.floor(durationInMilliseconds / 1000);
+      const hours = Math.floor(durationInSeconds / 3600);
+      const minutes = Math.floor((durationInSeconds % 3600) / 60);
+      const seconds = durationInSeconds % 60;
+      const formattedDuration = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+
+      // Ajouter l'entrée de durée au tableau room.durationHistory
+      room.durationHistory.push(`The participant ${participant.fullName} entered the room on ${entryTime.toISOString()} and left after ${formattedDuration} minutes`);
+
+      // Mise à jour de la salle avec les participants modifiés et la nouvelle durée
+     // await roomRepository.save({ ...room, participantsInTheRoom: updatedParticipants });
+
+      const test =await roomRepository.update(room.id, { participantsInTheRoom:room.participantsInTheRoom }, );
+
+      return participant ;
+    }
+  } catch (error) {
+    console.log(error);
   }
-} ;
+};
 
-interface IntParticipant {
-  name: string;
-}
 
 export const getParticipantsInRoom = async (req: Request, res: Response) => {
   try {
@@ -122,28 +126,18 @@ export const getParticipantsInRoom = async (req: Request, res: Response) => {
     const room = await roomRepository.findOne({ where: { roomId: roomId } });
 
     if (room) {
-      console.log('room ---------------- participants : ',room.participantsInTheRoom)
       // Création d'un tableau pour stocker les participants
-      const participants: IntParticipant[] = [];
+      const participants: any[] = [];
 
       const participantPromises = room.participantsInTheRoom.map(async (element: String) => {
-        console.log('element : ',String(element))
         const p = await userRepository.findOneById(String(element))
-          console.log('p : ',p)    
         if (p) {
-          // Création d'un objet IntParticipant avec les données nécessaires
-          const part: IntParticipant = { name: p.fullName }; // Ajustez la clé pour correspondre à votre modèle
-          participants.push(part);
+          participants.push(p);
         }
       });
 
-
-
       // Attendre que toutes les promesses soient résolues
       await Promise.all(participantPromises);
-
-      console.log('participants from get participants in the room : ' , participants) ;
-
 
       return res.status(200).json(participants);
     } else {

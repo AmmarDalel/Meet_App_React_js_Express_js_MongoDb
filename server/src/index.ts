@@ -10,10 +10,10 @@ import userRoutes from './Router/UserRouter';
 import CodeSendRoutes from './Router/CodeSendRoutes';
 import roomRouter from './Router/RoomRoutes' ;
 import "reflect-metadata";
-import Session from "express-session";
 import { RoomHandler } from "./Room";
 import { videoCallController } from "./Controller/videoCallController";
-import { v4 as uuidv4 } from "uuid"; // Assurez-vous d'importer correctement uuid
+import { v4 as uuidv4 } from "uuid"; 
+import bodyParser from "body-parser";
 
 // Créer une application express
 const app = express();
@@ -25,12 +25,9 @@ const io = new Server(server, {
   cors: {
     origin: "http://localhost:5173",
     methods: ["GET", "POST"]
-  }
+  } ,
+
 });
-
-// Stocker les utilisateurs dans une Map (Room ID => Set de User IDs)
-const rooms = new Map<string, Set<string>>();
-
 
  // Video Call Controller
  videoCallController(io);
@@ -48,40 +45,28 @@ const corsOptions = {
   optionsSuccessStatus: 200*/
 };
 
-app.use(express.json());
 app.use(cors(corsOptions));
+app.use(express.json({ limit: '100mb' })); // Augmenter la limite à 100mb
+app.use(bodyParser.json({ limit: '100mb' })); // Augmenter la limite à 100mb
+app.use(bodyParser.urlencoded({ limit: '100mb', extended: true })); // Augmenter la limite à 100mb
 app.use(cookieParser());
-
 app.use('/api/users/authent', authRoutes);
 app.use('/api/users/verifycode', verifyCodeRoutes);
 app.use('/api/users/verifyuser', userRoutes);
 app.use('/api/users/codesend', CodeSendRoutes);
 app.use('/api/room/participants' ,roomRouter ) ;
 
-
-app.use(Session({
-  secret: 'votre_secret',
-  resave: false,
-  saveUninitialized: false,
-  cookie: {
-    secure: false,
-    maxAge: 1000 * 60 * 60 * 24
-  }
-}));
-
   // Route pour créer une salle
   app.post("/create-room", (req, res) => {
     const roomId = uuidv4(); // Utilisez uuidv4 pour générer l'identifiant unique
-    console.log(roomId)   ;
     res.json({ roomId });
   });
 
-
 io.on('connection', (socket: Socket) => {
-  console.log(`User connected: ${socket.id}`);
-  RoomHandler(socket) ;
+   RoomHandler(socket) ;
 
 });
+
 // Démarrer le serveur
 server.listen(port, () => console.log(`Server is running on port ${port}`));
 
