@@ -24,6 +24,9 @@ export class Room {
     
   
     @Column()
+    participantsInTheRoom!: String[];
+
+    @Column()
     participants!: String[];
   
     @Column()
@@ -31,6 +34,13 @@ export class Room {
 
     @Column()
     conversation!: string;
+
+    @Column()
+    duration!: string[];
+ 
+    
+    @Column()
+    durationHistory!: string[];
  
 
 }

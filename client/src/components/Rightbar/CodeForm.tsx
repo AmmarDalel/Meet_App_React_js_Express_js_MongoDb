@@ -1,9 +1,8 @@
-import React, { useState } from 'react';
+import  { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import type { AppDispatch, RootState } from '../../Redux/Store';
-import { setauthentificate, setclosesuccessmessage, setclosesuccessmessagefromHome, setcorrectCode } from '../../Redux/features/user';
+import { setauthentificate, setcorrectCode } from '../../Redux/features/user';
 import Cookies from 'universal-cookie';
-import { jwtDecode } from "jwt-decode";
 import { useNavigate } from 'react-router-dom';
 
 function CodeForm() {
@@ -17,7 +16,7 @@ function CodeForm() {
     const id=useSelector((state:RootState)=>state.user.id) ;
 
     // Envoyer le code de confirmation au serveur
-    const handleCodeSubmit = async (e: React.FormEvent) => {
+    const handleCodeSubmit = async (e:any) => {
         e.preventDefault();
         try {
             const response = await fetch('http://localhost:5000/api/users/verifycode/confirmationcode', {
@@ -37,7 +36,7 @@ function CodeForm() {
                 const data = await response.json();
                 dispatch(setcorrectCode(true));
                 dispatch(setauthentificate(true));
-                dispatch(setclosesuccessmessagefromHome(false));
+                //dispatch(setclosesuccessmessagefromHome(false));
                 console.log('Code correct');
                 const token = data.token;
                 const cookies = new Cookies(null, { path: '/' });
@@ -50,6 +49,7 @@ function CodeForm() {
                 dispatch(setauthentificate(true));
                 console.error('Erreur d\'authentification');
                 navigate('/ConfirmationCode/IncorrectCode') ;
+                return ;
             }
         } catch (error) {
             console.error(error);
@@ -57,7 +57,7 @@ function CodeForm() {
     };
 
     return (
-        <form className='auth-form' onSubmit={handleCodeSubmit}>
+        <form className='auth-form' >
             <div className='submitconfirmationcodecontainer'>
                 <div className='confirmationcodecontainer'>
                     <label className='label'>Enter Code:</label>
@@ -73,7 +73,7 @@ function CodeForm() {
                 </div>
             
                 <div className='submitcontainer submitcontainerCode'>
-                    <button className='submitbutton' type='submit' onClick={handleCodeSubmit}>
+                    <button className='submitbutton' onClick={(e)=>handleCodeSubmit(e)} >
                         Submit
                     </button>
                 </div>

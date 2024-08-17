@@ -21,7 +21,7 @@ export class User {
     peerid!: string ;
 
     @Column()
-    avatar!: string
+    avatar!: string;
 
     @CreateDateColumn()
     createdAt!: Date;

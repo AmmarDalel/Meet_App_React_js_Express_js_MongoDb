@@ -2,32 +2,22 @@
 import './SuccessMessage.css'
 import './Form.css';
 import { Button } from '@mui/material';
-import { useDispatch, useSelector } from 'react-redux';
-import { AppDispatch, RootState } from '../../Redux/Store';
-import { setauthentificate, setclosesuccessmessage, setclosesuccessmessagefromHome, setCodeSent } from '../../Redux/features/user';
 import { useNavigate } from 'react-router-dom';
-import { useEffect } from 'react';
-import Cookies from 'universal-cookie';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../Redux/Store';
+
 
 
 
 function SuccessMessage() {
-  const dispatch = useDispatch<AppDispatch>();
-
-  const close=()=>{
-    dispatch(setclosesuccessmessage(true));
-    dispatch(setclosesuccessmessagefromHome(false));
-
-  }
-  const cookies = new Cookies();
+ const userId = useSelector((state: RootState) => state.user.id);
   const navigate = useNavigate();
 
-  useEffect(() => {
-      const userAccount = cookies.get('user');
-      if (userAccount) {
-          navigate('/');
-      }
-  }, [cookies, navigate]);
+  const close=()=>{
+   navigate(`/StartCall/${userId}`) ;
+  }
+
+
   return (
     <>
      <div className='container1'>
@@ -48,7 +38,9 @@ function SuccessMessage() {
           height:'44px',
           textTransform: 'none', // Remove uppercase
 
-        }}>Change name</Button>
+        }}
+        onClick={() => { close() }}
+        >Change name</Button>
       <Button variant="contained" sx={{
           fontSize: '12px',
           borderRadius: '8px',

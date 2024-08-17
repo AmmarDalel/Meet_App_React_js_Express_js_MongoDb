@@ -66,8 +66,15 @@
 }
 
 .submitcontainerAuth{
-    margin-top: 140px;
+    margin-top: 35%;
+ 
+    
+}
 
+.auth-form , .submitdatacontainer{
+    flex:1 ;
+    width: 100%;
+    height: 100%;
 }
 
 .submitcontainerCode{
@@ -76,6 +83,7 @@
 }
 
 .submitbutton{
+    position: inherit;
     width: 90%;
     height: 44px;
     border-radius: 8px;
@@ -140,4 +148,6 @@
     font-size: 12px;
 
 }
+
+
 

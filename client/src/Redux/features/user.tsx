@@ -1,5 +1,6 @@
 // features/userSlice.ts
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import Peer from 'peerjs';
 
 interface UserState {
     emailError: string;
@@ -12,10 +13,11 @@ interface UserState {
     correctCode:boolean ;
     authentificate:boolean;
     closesuccessmessage:boolean;
-    closesuccessmessagefromHome:boolean ;
     callId :string ;
     isInRoom:boolean ;
-
+    leavecall:boolean ;
+    me: Peer | undefined;
+    participants : string[] ;
   }
   
   const initialState: UserState = {
@@ -29,9 +31,11 @@ interface UserState {
     correctCode:false ,
     authentificate:false,
     closesuccessmessage:false,
-    closesuccessmessagefromHome :true ,
     callId:'' ,
     isInRoom:false ,
+   leavecall:false ,
+   me :undefined ,
+   participants:[] ,
   };
 
 const userSlice = createSlice({
@@ -59,9 +63,7 @@ const userSlice = createSlice({
     setclosesuccessmessage:(state, action: PayloadAction<boolean>) => {
       state.closesuccessmessage = action.payload;
   },
-  setclosesuccessmessagefromHome:(state, action: PayloadAction<boolean>) => {
-    state.closesuccessmessagefromHome = action.payload;
-},
+
   login: (state, action: PayloadAction<{ id:string ;fullname: string; email: string }>) => {
         state.id=action.payload.id ;
         state.fullname = action.payload.fullname;
@@ -74,11 +76,19 @@ const userSlice = createSlice({
     setIsInRoom: (state, action: PayloadAction<boolean>) => {
       state.isInRoom = action.payload;
   },
+  setLeavecall: (state, action: PayloadAction<boolean>) => {
+    state.leavecall = action.payload;
+},
+setME: (state, action: PayloadAction<Peer>) => {
+  state.me = action.payload;
+},
+setparticipants: (state, action: PayloadAction<string[]>) => {
+  state.participants = action.payload;
+},
 
-   
   },
 
 });
 
-export const { setEmailError, setIncorrectFullname, setRemplirChamp,setCodeSent,setcorrectCode ,setauthentificate , login , setclosesuccessmessage , setclosesuccessmessagefromHome ,setIsInRoom , setCallId } = userSlice.actions;
+export const { setEmailError, setIncorrectFullname, setRemplirChamp,setCodeSent,setcorrectCode ,setauthentificate , login , setclosesuccessmessage  ,setIsInRoom , setCallId  , setLeavecall , setME , setparticipants} = userSlice.actions;
 export default userSlice.reducer;

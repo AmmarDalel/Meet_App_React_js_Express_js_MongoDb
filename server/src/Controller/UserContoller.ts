@@ -9,20 +9,13 @@ let userRepository = getUserRepository();
 
 export const getByEmailName = async (req: Request, res: Response) => {
   const { fullName, email } = req.body;
-  console.log('req.body : ',req.body) ;
-
-  console.log('from getByEmail !!!!!!');
-  console.log(email) ;
-  console.log(fullName) ;
   try {
       if(userRepository!=null){
 
       const user = await userRepository.findOne({ where: { fullName , email} });     
       if (!user) {
-        console.log('User not found');
       res.status(404).json({ message: 'User not found' });
     } else {
-      console.log('User from get user ' , user);
       res.json(user);
     }
   }
