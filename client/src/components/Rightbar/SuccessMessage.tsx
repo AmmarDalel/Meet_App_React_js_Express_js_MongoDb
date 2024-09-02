@@ -6,9 +6,6 @@ import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../Redux/Store';
 
-
-
-
 function SuccessMessage() {
  const userId = useSelector((state: RootState) => state.user.id);
   const navigate = useNavigate();

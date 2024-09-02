@@ -1,9 +1,6 @@
 import React from 'react'
 import './TabHeader.css'
 
-
-
-
 interface ButtonProps {
   icon: React.ReactNode;
   title: string;

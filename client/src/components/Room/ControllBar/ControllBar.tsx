@@ -13,17 +13,14 @@ import { Button } from '@mui/material';
 import InputSlider from './InputSlider';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../../../Redux/Store';
-import { setLeavecall } from '../../../Redux/features/user';
 import { useNavigate } from 'react-router-dom';
-import { useContext, useEffect, useState } from 'react';
+import { useContext,  useState } from 'react';
 import { removePeerAction } from '../../../Context/peerActions';
-import { CallContext } from '../../../Context/CallContext';
 import { SocketContext } from '../../../Context/SocketIo';
 
 function ControllBar() {
   const dispatch = useDispatch<AppDispatch>();
-  const { stream , peers, me , leaveCall , VoiceControl , CamControl , Screensharing , ScreensharingClose} = useContext(SocketContext);
-  const {ws} = useContext(CallContext);
+  const { leaveCall , VoiceControl , CamControl , Screensharing } = useContext(SocketContext);
 
   const [VoiceEnable , setVoiceEnable]=useState(true) ;
   const [CamEnable , setCamEnable]=useState(true) ;

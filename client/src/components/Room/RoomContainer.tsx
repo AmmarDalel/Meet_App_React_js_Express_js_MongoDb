@@ -61,9 +61,9 @@ export function RoomContainer() {
 
 var bigstreamvideoplayer ;
 useEffect(()=>{
-  console.log('screenSharingIdotheruser : ', screenSharingIdotheruser) ;
+  console.log('peers : ', peers) ;
 
-}, [screenSharingIdotheruser])
+}, [peers])
 if(screenSharingIdotheruser){
   bigstreamvideoplayer = screenSharingVideo  ;
 
@@ -83,26 +83,26 @@ else{
          <Box sx={{ flexGrow: 1  , display:'flex'  , flexDirection:'row' , justifyContent:'center' 
         }}>
         <Box sx={{ flexGrow: 1   ,  display:'flex'  , flexDirection:'row'   , width:'100%' }}>
-          <Box sx={{ width:'100%', height:'100%' , position:'relative' , alignItems:'center'  , display:'flex'}}>
-              <Grid height={400} sx={{ flex:'1' }} >
-                <VideoPlayer stream={bigstreamvideoplayer}></VideoPlayer>
-              </Grid>
+            <Box sx={{ width:'100%', height:'100%' , position:'relative' , alignItems:'center'  , display:'flex'}}>
+                <Grid height={400} sx={{ flex:'1' }} >
+                  <VideoPlayer stream={bigstreamvideoplayer}></VideoPlayer>
+                </Grid>
             </Box>
-          
-        
-        </Box>
-        <Box sx={{  display:'flex'  , flexDirection:'column'  , justifyContent:'end'  , rowGap:'10px' }}>
-            <Grid height={100}  sx={{  border:' 1px solid #26303f' }}>
-                  <VideoPlayer stream={stream}></VideoPlayer>
-            </Grid>
-       
             
-          {Object.values(peers as PeerState).map((peer , index) => (
-            // Ensure each iteration returns a valid React element
-            <Grid key={index}  height={100}  sx={{  border:' 1px solid #26303f' }} >
-              {peer.stream && <VideoPlayer stream={peer.stream} />}             </Grid>
-          ))}
-        </Box>
+          
+          </Box>
+          <Box sx={{  display:'flex'  , flexDirection:'column'  , justifyContent:'end'  , rowGap:'10px' }}>
+              <Grid height={100}  sx={{  border:' 1px solid #26303f' }}>
+                    <VideoPlayer stream={stream}></VideoPlayer>
+              </Grid>
+        
+              
+            {Object.values(peers as PeerState).map((peer , index) => (
+              // Ensure each iteration returns a valid React element
+              <Grid key={index}  height={100}  sx={{  border:' 1px solid #26303f' }} >
+                {peer.stream && <VideoPlayer stream={peer.stream} />}             </Grid>
+            ))}
+          </Box>
         
         </Box>
         

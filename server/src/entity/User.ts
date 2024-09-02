@@ -8,7 +8,7 @@ export class User {
     @ObjectIdColumn()
     id!: string
 
-    @Column()
+    @Column({ unique: true  , nullable: false} )
     fullName!: string
 
     @PrimaryColumn()
@@ -22,6 +22,10 @@ export class User {
 
     @Column()
     avatar!: string;
+
+    
+    @Column()
+    online!: boolean;
 
     @CreateDateColumn()
     createdAt!: Date;

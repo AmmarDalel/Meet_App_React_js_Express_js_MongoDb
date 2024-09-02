@@ -20,12 +20,13 @@ function StartCallPanel() {
     var userdata=null ;
     var userId: string | null=null ;
     var email: string | null=null ;
-    
+    const socketId=ws.id ;
     try{
       usertoken=cookies.get('user') ;
       userdata = jwtDecode(usertoken.token); // decode your token here
       userId = String(userdata.userid);
       email=String(userdata.email);
+    
     }
     catch(error){
       console.log(error) ;

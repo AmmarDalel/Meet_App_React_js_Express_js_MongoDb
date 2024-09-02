@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany, ObjectId, CreateDateColumn, ObjectIdColumn } from 'typeorm';
+import { Entity, Column,  CreateDateColumn, ObjectIdColumn } from 'typeorm';
 
 @Entity()
 export class Call {

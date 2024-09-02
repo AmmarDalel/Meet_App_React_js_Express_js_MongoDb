@@ -5,6 +5,7 @@ import cors from "cors";
 import dotenv from "dotenv";
 import cookieParser from 'cookie-parser';
 import authRoutes from "./Router/authRoutes";
+import messagesrouter from "./Router/MessageRouter" ;
 import verifyCodeRoutes from './Router/verifyConfirmationCode';
 import userRoutes from './Router/UserRouter';
 import CodeSendRoutes from './Router/CodeSendRoutes';
@@ -55,19 +56,40 @@ app.use('/api/users/verifycode', verifyCodeRoutes);
 app.use('/api/users/verifyuser', userRoutes);
 app.use('/api/users/codesend', CodeSendRoutes);
 app.use('/api/room/participants' ,roomRouter ) ;
+app.use('/api/room/messages',messagesrouter) ;
+
+const userSocketMap: { [key: string]: string } = {};
+
 
   // Route pour créer une salle
   app.post("/create-room", (req, res) => {
+    const { socketId } = req.body; // Récupérer le socket.id du corps de la requête
+    console.log('socketid from create-room : ',socketId)
     const roomId = uuidv4(); // Utilisez uuidv4 pour générer l'identifiant unique
     res.json({ roomId });
   });
 
+
 io.on('connection', (socket: Socket) => {
+  console.log("a user connected", socket.id)
+  const userId = socket.handshake.query.userId
+  console.log('userId : ',userId , 'socket.id : ', socket.id) ;
+  if(userId=='null'){console.log('null') }
+  else if(userId !== "undefined" && typeof userId === "string") {
+    userSocketMap[userId] = socket.id
+  }
+  console.log('userSocketMap : ', userSocketMap) ;
    RoomHandler(socket) ;
+   
 
 });
+
+export const getReceiverSocketId = (receiverId:string) => {
+  console.log('receiverId : ',receiverId,' , receivesocketId : ',userSocketMap[receiverId]);
+  return userSocketMap[receiverId] ;
+}
 
 // Démarrer le serveur
 server.listen(port, () => console.log(`Server is running on port ${port}`));
 
-
+export { app, server, io }

@@ -11,10 +11,10 @@ const Protected = () => {
 
  
   if(  usertoken  )
-return              <Outlet />   
+    return<Outlet />   
 
- 
-  else return  <Navigate to="/authentificate" />;
+  
+    else return  <Navigate to="/authentificate" />;
 };
 
 export default Protected;

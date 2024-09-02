@@ -56,6 +56,7 @@ function AuthForm() {
 
   const createPost = async (newImage: any) => {
     try {
+      console.log('data : ' ,newImage) ;
       const response= await axios.post('http://localhost:5000/api/users/authent/authenticate', newImage);
       const data = await response.data;
 
@@ -133,7 +134,10 @@ function AuthForm() {
   };
 
   useEffect(()=>{
-    createPost(postImage) ;
+    if(postImage.email!="" && postImage.fullname!="" && postImage.myFile!=""){
+      createPost(postImage) ;
+      console.log('yes') ;
+    }
 
   } , [postImage])
 
@@ -179,9 +183,9 @@ function AuthForm() {
           />
         </div>
         <div className='incorrectfullnamecontainer'>
-          {emailError && <p className='error'>{emailError}</p>}
-          {incorrectFullname && <p className='error'>Incorrect Full name!</p>}
-          {remplirChamp && <p className='error'>{remplirChamp}</p>}
+          {<p className='error'> {emailError &&  emailError}</p>}
+          { <p className='error'>{incorrectFullname && 'Incorrect Full name!'}</p>}
+          { <p className='error'>{remplirChamp && remplirChamp}</p>}
         </div>
         <div className='submitcontainer submitcontainerAuth'>
           <button type='submit' className='submitbutton'>

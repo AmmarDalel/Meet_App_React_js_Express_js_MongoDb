@@ -14,8 +14,12 @@ export class Message {
   createdAt!: Date;
 
   @Column()
+  sender!:string ;
+
+  @Column()
   type!:string ;
 
+  
   @Column()
   conversation!: string;
 

@@ -7,6 +7,11 @@ let userRepository = getUserRepository();
 export const authenticate = async ( req:Request  , res:Response) => { 
     const { myFile , fullname, email  } = req.body;
 
+    console.log('fullname : ', fullname) ;
+    console.log('email : ', email) ;
+    console.log('myFile : ', myFile) ;
+
+
     let user:User|null ;
     let user2:User|null ;
     
@@ -65,10 +70,12 @@ export const authenticate = async ( req:Request  , res:Response) => {
           if(myFile) user.avatar=myFile ;
           await userRepository.save(user);
           res.status(200).json({ message: 'User successfully authenticated' ,user });
+          return;
         }
 
     } catch (error) {
         res.status(500).json({ message: 'Error during user authentication' });
+        return;
     }
 
   }

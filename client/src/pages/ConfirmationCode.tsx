@@ -7,9 +7,9 @@ function ConfirmationCode() {
     <div className='appcontainer'> 
     
           <EmptyRoomContainer/>
-          <RightSidebar>
-              <CodeForm/>
-          </RightSidebar>
+            <RightSidebar>
+                <CodeForm/>
+            </RightSidebar>
           
         </div> 
   )

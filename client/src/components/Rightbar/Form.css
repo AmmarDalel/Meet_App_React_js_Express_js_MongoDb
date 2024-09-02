@@ -44,7 +44,6 @@
     flex-direction: column;
     row-gap: 5px;
     margin-top: 15px;
-
 }
 
  .label{
@@ -66,9 +65,7 @@
 }
 
 .submitcontainerAuth{
-    margin-top: 35%;
- 
-    
+    margin-top: 15%;  
 }
 
 .auth-form , .submitdatacontainer{
@@ -78,7 +75,7 @@
 }
 
 .submitcontainerCode{
-    margin-top: 65%;
+    margin-top: 100%;
 
 }
 
@@ -131,12 +128,15 @@
 
 
 .incorrectfullnamecontainer{
+    position: relative;
+    height: 50px;
     text-align: center;
 }
 
 .error{
     color: red;
     font-size: 12px;
+    position: relative;
 }
 
 .coderesult{

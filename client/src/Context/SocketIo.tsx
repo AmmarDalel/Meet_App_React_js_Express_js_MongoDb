@@ -87,6 +87,7 @@ export const RoomProvider: React.FC<CallProviderProps> = ({ children }) => {
             const call = me.call(peerId, stream);
             if (call) {
                 call.on("stream", async(peerStream: any) => {
+                    console.log('user joined') ;
                     peerDispatch(addPeerAction(peerId, peerStream));
                 });
             } else {
@@ -98,6 +99,7 @@ export const RoomProvider: React.FC<CallProviderProps> = ({ children }) => {
             if (call) {
                 call.answer(stream);
                 call.on("stream", (peerStream: any) => {
+                    console.log('answer the call') ;
                     peerDispatch(addPeerAction(call.peer, peerStream));
                 });
             } else {
@@ -123,6 +125,7 @@ export const RoomProvider: React.FC<CallProviderProps> = ({ children }) => {
 
     useEffect(()=>{
         ws.on('user-disconnected',({peerId , participant}:any)=>{
+            console.log('user leave the call from socket io')
             peerDispatch(removePeerAction(peerId));
             dispatch(setLeavecall(true)) ;
             setUserleavethecall(participant) ; 

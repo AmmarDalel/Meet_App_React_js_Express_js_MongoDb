@@ -1,11 +1,12 @@
 // participants.ts
-import { useSelector } from "react-redux";
-import { RootState } from "../Redux/Store";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "../Redux/Store";
 import { createContext, ReactNode, useContext, useEffect, useState } from "react";
 import { SocketContext } from "../Context/SocketIo";
 import { PeerState } from "../Context/peerReducer";
 import Cookies from 'universal-cookie';
 import { jwtDecode } from 'jwt-decode';
+import { setParticipants } from "../Redux/features/participants";
 
 // Fonction pour obtenir les participants depuis l'API
 export const fetchParticipants = async (roomId: string) => {
@@ -38,10 +39,14 @@ interface ParticipantsProviderProps {
 
 export const ParticipantsProvider: React.FC<ParticipantsProviderProps> =({children})=>{
 const roomId = useSelector((state: RootState) => state.user.callId);
-  const [participants, setParticipants] = useState<string[]>([]);
+//const onlineparticipants = useSelector((state: RootState) => state.participants.online);
+const dispatch = useDispatch<AppDispatch>();
+
+
+  //const [participants, setParticipants] = useState<string[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const { peers} = useContext(SocketContext);
+  const {stream , peers} = useContext(SocketContext);
   const [videoTracks, setVideoTracks] = useState(false) ;
   const [audioTracks, setAudioTracks] = useState(false) ;
   const [HostvideoTracks, setHostVideoTracks] = useState(false) ;
@@ -55,7 +60,8 @@ const roomId = useSelector((state: RootState) => state.user.callId);
     if (roomId) {
       fetchParticipants(roomId)
         .then((data) => {
-          setParticipants(data);
+         // setParticipants(data);
+          dispatch(setParticipants(data)) ;
           setLoading(false);
         })
         .catch((error) => {
@@ -87,6 +93,6 @@ const roomId = useSelector((state: RootState) => state.user.callId);
    
   }, [peers]);
 
-    return <ParticipantsContext.Provider value={{participants , videoTracks , audioTracks , HostaudioTracks , HostvideoTracks , userId}}>{children}</ParticipantsContext.Provider> ;
+    return <ParticipantsContext.Provider value={{ videoTracks , audioTracks , HostaudioTracks , HostvideoTracks , userId}}>{children}</ParticipantsContext.Provider> ;
 
 }

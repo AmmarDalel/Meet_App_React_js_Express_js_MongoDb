@@ -6,6 +6,7 @@ function IncorrectCode() {
   return (
     <div className='appcontainer'> 
      <EmptyRoomContainer/>
+     
      <RightSidebar>
          <ErrorMessage/>
      </RightSidebar>

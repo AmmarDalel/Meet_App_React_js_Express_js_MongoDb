@@ -73,10 +73,13 @@ export const RoomHandler = (socket: Socket) => {
         socket.to(roomId).emit("user-Stopp");
     };
 
+   
+
     socket.on('create-room', createRoom);
     socket.on('join-room', joinRoom);
     socket.on('user-leaved', leaveRoom);
     socket.on('start-sharing', startSharing);
     socket.on('stop-sharing', stopSharing);
+
     
 };

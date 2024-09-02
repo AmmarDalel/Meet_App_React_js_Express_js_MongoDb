@@ -9,6 +9,7 @@ import Cookies from 'universal-cookie';
 import {jwtDecode} from 'jwt-decode'
 import SessionId from '../components/Rightbar/SessionId'
 import { useEffect } from 'react'
+import { ParticipantsProvider } from '../Data/participants'
 function Call() {
     const {id}=useParams<string>() ;
     const dispatch = useDispatch<AppDispatch>();
@@ -22,9 +23,11 @@ function Call() {
   return (
     <div className='appcontainer'> 
         <RoomContainer/>
-        <RightSidebar > 
-          {id?<SessionId roomId={id}/> :<></>}
-        </RightSidebar>             
+        <ParticipantsProvider>
+          <RightSidebar > 
+            {id?<SessionId roomId={id}/> :<></>}
+          </RightSidebar>
+        </ParticipantsProvider>        
     </div>
   )
 }

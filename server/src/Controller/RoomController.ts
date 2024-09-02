@@ -17,6 +17,7 @@ export const CreateRoom = async (email: string, peerId: string, roomId: string) 
             throw new Error(`User with email ${email} not found`);
         }
         createdby.peerid=peerId ;
+        createdby.online=true ;
         const updatedcreatedby= await userRepository.save(createdby) ;
         // room creation 
         const room = new Room();
@@ -29,8 +30,8 @@ export const CreateRoom = async (email: string, peerId: string, roomId: string) 
         room.participantsInTheRoom.push(createdby.id) ;
         
         //conversation creation 
-        room.conversation = String(createConversation()) ;
-       
+        const conversation=await createConversation() ;
+        room.conversation = String(conversation) ;
         const call=new Call() ;
         call.callType='video' ;
         call.endTime=undefined ;
@@ -52,6 +53,7 @@ export const AddParticipant = async (email: string, peerId: string, roomId: stri
       throw new Error(`Participant with email ${email} not found`);
     }
     participant.peerid=peerId ;
+    participant.online=true ;
     const updatedparticipant=userRepository.save(participant) ;
     // Trouver la salle par ID et charger les participants existants
     const room = await roomRepository.findOne({ where: { roomId: roomId }});
@@ -79,7 +81,8 @@ export const LeaveParticipant = async (peerId: string, roomId: string, duration:
 
     if (participant && room) {
       // Filtrage des participants de la salle pour enlever le participant qui quitte
-  
+      participant.online=false ;
+      const updatedparticipant=userRepository.save(participant) ;
       const updatedParticipants = room.participantsInTheRoom.filter(participantRoom => String(participantRoom) !== String(participant.id));
       room.participantsInTheRoom= updatedParticipants ;
       // Si room.durationHistory n'existe pas, l'initialiser comme un tableau vide
